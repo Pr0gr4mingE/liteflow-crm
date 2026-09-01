@@ -3,7 +3,7 @@
 
 export async function listarClientesPfAction() {
   try {
-    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cliente-pf`, {
+    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/cliente-pf", {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store", 

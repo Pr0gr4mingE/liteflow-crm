@@ -25,7 +25,7 @@ export async function criarNegociacaoPfAction(formData: FormData) {
   try {
     // Note que estou passando o clienteId via URL ou Body dependendo de como sua API espera.
     // Aqui estou mandando no body junto com o DTO para simplificar. Ajuste conforme sua API!
-    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/negociacao-pf`, {
+    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL+ "/negociacao-pf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...payload, clienteId }), 

@@ -26,7 +26,7 @@ export async function criarClientePfAction(formData: FormData) {
 
   // 3. Comportamento Real (Conexão com a API)
   try {
-    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cliente-pf`, {
+    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/cliente-pf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
