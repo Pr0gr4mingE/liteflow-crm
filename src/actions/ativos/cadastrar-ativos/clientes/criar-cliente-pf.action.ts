@@ -1,11 +1,19 @@
+// src/actions/ativos/cadastrar-ativos/clientes/criar-cliente-pf.action.ts
 "use server";
 
+import { cookies } from "next/headers";
 import { ClientePfFormdata } from "@/shared/types/ui/formdata/ativos/cliente-pf.formdata";
 
 export async function criarClientePfAction(formData: FormData) {
-  const isVisitorMode = formData.get("isVisitorMode") === "true";
+  // 1. Pegamos a chave de sessão do "bolso" do servidor
+  const cookieStore = await cookies();
+  const usuarioId = cookieStore.get("session_token")?.value;
 
-  // 1. Extração e tipagem baseada no DTO
+  if (!usuarioId) {
+    return { sucesso: false, mensagem: "Usuário não autenticado. Faça login novamente." };
+  }
+
+  // 2. Extração e tipagem baseada no DTO
   const payload: ClientePfFormdata = {
     nome: formData.get("nome") as string,
     cpf: formData.get("cpf") as string,
@@ -13,23 +21,17 @@ export async function criarClientePfAction(formData: FormData) {
     telefone: formData.get("telefone") as string,
   };
 
-  // 2. Comportamento do Modo Visitante
-  if (isVisitorMode) {
-    // Simulando o tempo de rede
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    return { 
-      sucesso: true, 
-      id: `mock-cli-pf-${Date.now()}`, // Retornamos um ID falso para a cascata funcionar
-      mensagem: "Cliente PF criado no Modo Visitante!" 
-    };
-  }
+  // 3. Injetamos o ID do responsável no payload final
+  const payloadDaApi = {
+    ...payload,
+    usuarioResponsavelId: usuarioId
+  };
 
-  // 3. Comportamento Real (Conexão com a API)
   try {
     const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/cliente-pf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payloadDaApi), // Drizzle vai receber com o ID
     });
 
     const dados = await resposta.json();

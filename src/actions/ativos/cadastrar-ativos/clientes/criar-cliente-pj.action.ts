@@ -1,11 +1,20 @@
+// src/actions/ativos/cadastrar-ativos/clientes/criar-cliente-pj.action.ts
 "use server";
 
+import { cookies } from "next/headers";
 import { ClientePjFormdata } from "@/shared/types/ui/formdata/ativos/cliente-pj.formdata";
 import { SegmentoEmpresa } from "@/shared/utils/types/segmento-empresa.type";
 
 export async function criarClientePjAction(formData: FormData) {
-  const isVisitorMode = formData.get("isVisitorMode") === "true";
+  // 1. Pegamos a chave de sessão do "bolso" do servidor
+  const cookieStore = await cookies();
+  const usuarioId = cookieStore.get("session_token")?.value;
 
+  if (!usuarioId) {
+    return { sucesso: false, mensagem: "Usuário não autenticado. Faça login novamente." };
+  }
+
+  // 2. Extração e tipagem baseada no DTO
   const payload: ClientePjFormdata = {
     razaoSocial: formData.get("razaoSocial") as string,
     nomeFantasia: formData.get("nomeFantasia") as string,
@@ -15,16 +24,17 @@ export async function criarClientePjAction(formData: FormData) {
     telefone: formData.get("telefone") as string,
   };
 
-  if (isVisitorMode) {
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    return { sucesso: true, id: `mock-cli-pj-${Date.now()}`, mensagem: "Empresa criada no Modo Visitante!" };
-  }
+  // 3. Injetamos o ID do responsável no payload final
+  const payloadDaApi = {
+    ...payload,
+    usuarioResponsavelId: usuarioId
+  };
 
   try {
     const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/cliente-pj", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payloadDaApi), // Drizzle vai receber com o ID
     });
 
     const dados = await resposta.json();
