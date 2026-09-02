@@ -1,12 +1,20 @@
+// src/actions/ativos/cadastrar-ativos/negociacoes/criar-negociacao-pj.action.ts
 "use server";
 
+import { cookies } from "next/headers";
 import { NegociacaoPjFormdata } from "@/shared/types/ui/formdata/ativos/negociacao-pj.formdata";
 import { FaseNegociacaoPj } from "@/shared/utils/types/fase-negociacao-pj.type";
 
 export async function criarNegociacaoPjAction(formData: FormData) {
-  const isVisitorMode = formData.get("isVisitorMode") === "true";
+  // 1. Valida a autenticação
+  const cookieStore = await cookies();
+  const usuarioId = cookieStore.get("session_token")?.value;
+
+  if (!usuarioId) {
+    return { sucesso: false, mensagem: "Usuário não autenticado. Faça login novamente." };
+  }
+
   const clienteId = formData.get("clienteId") as string;
-  
   const dataPrevisaoStr = formData.get("dataPrevisaoFechamento") as string;
 
   const payload: NegociacaoPjFormdata = {
@@ -17,16 +25,18 @@ export async function criarNegociacaoPjAction(formData: FormData) {
     dataPrevisaoFechamento: dataPrevisaoStr ? new Date(dataPrevisaoStr) : undefined,
   };
 
-  if (isVisitorMode) {
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    return { sucesso: true, mensagem: "Negociação Corporativa criada no Modo Visitante!" };
-  }
+  // 2. Injeta o clienteId e o usuarioResponsavelId no payload final
+  const payloadDaApi = {
+    ...payload,
+    clienteId,
+    usuarioResponsavelId: usuarioId,
+  };
 
   try {
-    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL+ "/negociacao-pj", {
+    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/negociacao-pj", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payload, clienteId }),
+      body: JSON.stringify(payloadDaApi),
     });
 
     const dados = await resposta.json();

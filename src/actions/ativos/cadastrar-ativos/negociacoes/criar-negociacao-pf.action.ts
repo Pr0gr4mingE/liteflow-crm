@@ -1,12 +1,20 @@
+// src/actions/ativos/cadastrar-ativos/negociacoes/criar-negociacao-pf.action.ts
 "use server";
 
+import { cookies } from "next/headers";
 import { NegociacaoPfFormdata } from "@/shared/types/ui/formdata/ativos/negociacao-pf.formdata";
 import { FaseNegociacaoPf } from "@/shared/utils/types/fase-negociacao-pf.type";
 
 export async function criarNegociacaoPfAction(formData: FormData) {
-  const isVisitorMode = formData.get("isVisitorMode") === "true";
-  const clienteId = formData.get("clienteId") as string; // Necessário para vincular!
-  
+  // 1. Valida a autenticação
+  const cookieStore = await cookies();
+  const usuarioId = cookieStore.get("session_token")?.value;
+
+  if (!usuarioId) {
+    return { sucesso: false, mensagem: "Usuário não autenticado. Faça login novamente." };
+  }
+
+  const clienteId = formData.get("clienteId") as string; 
   const dataPrevisaoStr = formData.get("dataPrevisaoFechamento") as string;
 
   const payload: NegociacaoPfFormdata = {
@@ -17,18 +25,18 @@ export async function criarNegociacaoPfAction(formData: FormData) {
     dataPrevisaoFechamento: dataPrevisaoStr ? new Date(dataPrevisaoStr) : undefined,
   };
 
-  if (isVisitorMode) {
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    return { sucesso: true, mensagem: "Negociação PF criada no Modo Visitante!" };
-  }
+  // 2. Injeta o clienteId e o usuarioResponsavelId no payload final
+  const payloadDaApi = {
+    ...payload,
+    clienteId,
+    usuarioResponsavelId: usuarioId,
+  };
 
   try {
-    // Note que estou passando o clienteId via URL ou Body dependendo de como sua API espera.
-    // Aqui estou mandando no body junto com o DTO para simplificar. Ajuste conforme sua API!
-    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL+ "/negociacao-pf", {
+    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/negociacao-pf", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...payload, clienteId }), 
+      body: JSON.stringify(payloadDaApi), 
     });
 
     const dados = await resposta.json();
