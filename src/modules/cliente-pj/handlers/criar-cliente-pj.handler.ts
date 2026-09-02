@@ -17,6 +17,7 @@ export class CriarClientePjHandler {
         email: limparEmail(dadosEntrada.email),
         cnpj: apenasNumeros(dadosEntrada.cnpj),
         telefone: apenasNumeros(dadosEntrada.telefone),
+        usuarioResponsavelId:(dadosEntrada.usuarioResponsavelId)
       };
 
       return await this.criarClientePjUseCase.execute(dadosFormatados);

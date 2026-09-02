@@ -16,6 +16,7 @@ export class CriarClientePfHandler {
         email: limparEmail(dadosEntrada.email),
         cpf: apenasNumeros(dadosEntrada.cpf),
         telefone: apenasNumeros(dadosEntrada.telefone),
+        usuarioResponsavelId: (dadosEntrada.usuarioResponsavelId)
       };
 
       return await this.criarClientePfUseCase.execute(dadosFormatados);
