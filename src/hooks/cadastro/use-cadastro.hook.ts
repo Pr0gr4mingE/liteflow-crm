@@ -28,7 +28,7 @@ export function useCadastro() {
       
       // Dá tempo do usuário ler o sucesso e joga ele pro Login
       setTimeout(() => {
-        router.push("/login");
+        router.push("/login-usuario");
       }, 1500);
     }
   };
