@@ -4,12 +4,7 @@
 import { useCadastrarNegociacaoPj } from "@/hooks/ativos/cad-negociacoes/use-cad-negociacao-pj.hook";
 import { useListarClientesPj } from "@/hooks/ativos/buscar-clientes/use-listar-cliente-pj.hook";
 
-interface FormNegociacaoPjProps {
-  clienteId?: string | null; 
-}
-
-export function FormNegociacaoPj({ clienteId }: FormNegociacaoPjProps) {
-  // Consumo estrito via Hooks
+export function FormNegociacaoPj() {
   const { cadastrar, isPending, erro } = useCadastrarNegociacaoPj();
   const { clientes, isLoading: carregandoClientes } = useListarClientesPj();
 
@@ -17,41 +12,30 @@ export function FormNegociacaoPj({ clienteId }: FormNegociacaoPjProps) {
     const sucesso = await cadastrar(formData);
     
     if (sucesso) {
-      console.log("Negociação PJ criada com Sucesso (Modo Visitante)!");
+      console.log("Negociação PJ criada com Sucesso!");
       // Futuro: toast de sucesso, limpar campos ou fechar modal
     }
   };
 
   return (
     <form action={handleSubmit} className="space-y-4">
-      <input type="hidden" name="isVisitorMode" value="true" />
-
-      {/* Renderização Condicional da Empresa */}
-      {clienteId ? (
-        <div className="bg-blue-50 border border-blue-100 text-blue-700 px-4 py-3 rounded text-sm mb-4 flex items-center justify-between">
-          <span>Vinculado à nova empresa recém-cadastrada.</span>
-          <svg className="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
-          <input type="hidden" name="clienteId" value={clienteId} />
-        </div>
-      ) : (
-        <div className="flex flex-col gap-1 mb-4">
-          <label htmlFor="clienteId" className="text-sm font-medium text-gray-700">Selecione a Empresa *</label>
-          <select 
-            id="clienteId" 
-            name="clienteId" 
-            required 
-            disabled={carregandoClientes}
-            className="border p-2 rounded bg-white disabled:bg-gray-100 disabled:text-gray-500"
-          >
-            <option value="">
-              {carregandoClientes ? "Carregando empresas..." : "Selecione uma empresa"}
-            </option>
-            {clientes.map((c) => (
-              <option key={c.id} value={c.id}>{c.razaoSocial}</option>
-            ))}
-          </select>
-        </div>
-      )}
+      <div className="flex flex-col gap-1 mb-4">
+        <label htmlFor="clienteId" className="text-sm font-medium text-gray-700">Selecione a Empresa *</label>
+        <select 
+          id="clienteId" 
+          name="clienteId" 
+          required 
+          disabled={carregandoClientes}
+          className="border p-2 rounded bg-white disabled:bg-gray-100 disabled:text-gray-500"
+        >
+          <option value="">
+            {carregandoClientes ? "Carregando empresas..." : "Selecione uma empresa"}
+          </option>
+          {clientes.map((c) => (
+            <option key={c.id} value={c.id}>{c.razaoSocial}</option>
+          ))}
+        </select>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-1">

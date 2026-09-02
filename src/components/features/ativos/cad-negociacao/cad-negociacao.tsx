@@ -5,11 +5,7 @@ import { useState } from "react";
 import { FormNegociacaoPf } from "./forms/form-negociacao-pf";
 import { FormNegociacaoPj } from "./forms/form-negociacao-pj";
 
-interface CadastroNegociacaoFeatureProps {
-  clienteId: string | null;
-}
-
-export function CadastroNegociacaoFeature({ clienteId }: CadastroNegociacaoFeatureProps) {
+export function CadastroNegociacaoFeature() {
   const [tipoNegociacao, setTipoNegociacao] = useState<"PF" | "PJ">("PF");
 
   return (
@@ -40,8 +36,8 @@ export function CadastroNegociacaoFeature({ clienteId }: CadastroNegociacaoFeatu
 
       <div className="p-6">
         {tipoNegociacao === "PF" 
-          ? <FormNegociacaoPf clienteId={clienteId} /> 
-          : <FormNegociacaoPj clienteId={clienteId} />
+          ? <FormNegociacaoPf /> 
+          : <FormNegociacaoPj />
         }
       </div>
     </div>
