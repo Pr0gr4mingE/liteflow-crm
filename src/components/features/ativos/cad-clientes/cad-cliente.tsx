@@ -5,13 +5,7 @@ import { useState } from "react";
 import { FormClientePf } from "./forms/form-cliente-pf";
 import { FormClientePj } from "./forms/form-cliente-pj";
 
-// 1. Adicionamos a interface para o "entregador" receber a encomenda
-interface CadastroClientesFeatureProps {
-  onSucesso?: (clienteId: string) => void;
-}
-
-// 2. Avisamos o componente que ele tem uma prop a receber
-export function CadastroClientesFeature({ onSucesso }: CadastroClientesFeatureProps) {
+export function CadastroClientesFeature() {
   const [tipoPessoa, setTipoPessoa] = useState<"PF" | "PJ">("PF");
 
   return (
@@ -41,10 +35,9 @@ export function CadastroClientesFeature({ onSucesso }: CadastroClientesFeaturePr
       </div>
 
       <div className="p-6">
-        {/* 3. Repassamos a prop para os formulários! */}
         {tipoPessoa === "PF" 
-          ? <FormClientePf onSucesso={onSucesso} /> 
-          : <FormClientePj onSucesso={onSucesso} />
+          ? <FormClientePf /> 
+          : <FormClientePj />
         }
       </div>
     </div>

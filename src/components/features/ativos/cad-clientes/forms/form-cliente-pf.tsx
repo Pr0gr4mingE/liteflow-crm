@@ -3,34 +3,20 @@
 
 import { useCadastrarClientePf } from "@/hooks/ativos/cad-clientes/use-cad-cliente-pf.hook";
 
-// 1. Criamos a interface para receber a prop do componente pai
-interface FormClientePfProps {
-  onSucesso?: (clienteId: string) => void;
-}
-
-// 2. Recebemos a prop no componente
-export function FormClientePf({ onSucesso }: FormClientePfProps) {
-
+export function FormClientePf() {
   const { cadastrar, isPending, erro } = useCadastrarClientePf();
 
   const handleSubmit = async (formData: FormData) => {
     const { sucesso, id } = await cadastrar(formData);
     
-    // 3. Verificamos se teve sucesso e se recebemos o ID
     if (sucesso && id) {
       console.log("Cliente PF criado com Sucesso! ID:", id);
-      
-      // 4. Chamamos a função onSucesso para avisar a Page e trocar a tela
-      if (onSucesso) {
-        onSucesso(id);
-      }
+      // Futuro: adicionar toast de sucesso ou limpar o formulário
     }
   };
 
   return (
     <form action={handleSubmit} className="space-y-4">
-      <input type="hidden" name="isVisitorMode" value="true" />
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-1 md:col-span-2">
           <label htmlFor="nome" className="text-sm font-medium text-gray-700">Nome Completo *</label>

@@ -3,33 +3,20 @@
 
 import { useCadastrarClientePj } from "@/hooks/ativos/cad-clientes/use-cad-cliente-pj.hook";
 
-// 1. Criamos a interface para receber a prop do componente pai
-interface FormClientePjProps {
-  onSucesso?: (clienteId: string) => void;
-}
-
-// 2. Recebemos a prop no componente
-export function FormClientePj({ onSucesso }: FormClientePjProps) {
+export function FormClientePj() {
   const { cadastrar, isPending, erro } = useCadastrarClientePj();
 
   const handleSubmit = async (formData: FormData) => {
     const { sucesso, id } = await cadastrar(formData);
     
-    // 3. Verificamos se teve sucesso e se recebemos o ID
     if (sucesso && id) {
       console.log("Empresa PJ criada com Sucesso! ID:", id);
-      
-      // 4. Chamamos a função onSucesso para avisar a Page e engatar a cascata
-      if (onSucesso) {
-        onSucesso(id);
-      }
+      // Futuro: adicionar toast de sucesso ou limpar o formulário
     }
   };
 
   return (
     <form action={handleSubmit} className="space-y-4">
-      <input type="hidden" name="isVisitorMode" value="true" />
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="flex flex-col gap-1 md:col-span-2">
           <label htmlFor="razaoSocial" className="text-sm font-medium text-gray-700">Razão Social *</label>
