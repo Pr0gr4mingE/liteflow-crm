@@ -9,7 +9,12 @@ export class ClientePfRepository implements IClientePfRepository {
   async salvar(dados: CriarClientePfDTO): Promise<ClientePf> {
     const [novoCliente] = await db
       .insert(clientesPfTable)
-      .values(dados as typeof clientesPfTable.$inferInsert) // <-- Correção aplicada
+      .values({
+        nome: dados.nome,
+        cpf: dados.cpf,
+        email: dados.email,
+        telefone: dados.telefone,
+        usuarioResponsavelId: dados.usuarioResponsavelId}) // <-- Correção aplicada
       .returning();
     return novoCliente as ClientePf;
   }

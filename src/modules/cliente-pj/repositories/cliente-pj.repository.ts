@@ -10,7 +10,15 @@ export class ClientePjRepository implements IClientePjRepository {
   async salvar(dados: CriarClientePjDTO): Promise<ClientePj> {
     const [novoCliente] = await db
       .insert(clientesPjTable)
-      .values(dados as typeof clientesPjTable.$inferInsert) // <-- Correção aplicada
+      .values({
+        cnpj: dados.cnpj,
+        razaoSocial: dados.razaoSocial,
+        nomeFantasia: dados.nomeFantasia,
+        email: dados.email,
+        telefone: dados.telefone,
+        segmento: dados.segmento,
+        usuarioResponsavelId: dados.usuarioResponsavelId,
+         }) // <-- Correção aplicada
       .returning();
     return novoCliente as ClientePj;
   }
