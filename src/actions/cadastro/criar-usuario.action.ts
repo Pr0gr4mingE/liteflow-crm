@@ -8,7 +8,7 @@ export async function criarUsuarioAction(formData: FormData) {
   const cargo = formData.get("cargo");
 
   try {
-    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/usuario", {
+    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/usuario`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nome, email, senha, cpf, cargo }),

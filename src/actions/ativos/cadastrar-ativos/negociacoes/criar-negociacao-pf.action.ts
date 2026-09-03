@@ -33,7 +33,7 @@ export async function criarNegociacaoPfAction(formData: FormData) {
   };
 
   try {
-    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/negociacao-pf", {
+    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/negociacao-pf`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payloadDaApi), 

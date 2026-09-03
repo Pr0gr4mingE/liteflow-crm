@@ -31,10 +31,10 @@ export async function criarClientePjAction(formData: FormData) {
   };
 
   try {
-    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/cliente-pj", {
+    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cliente-pj`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payloadDaApi), // Drizzle vai receber com o ID
+      body: JSON.stringify(payloadDaApi), 
     });
 
     const dados = await resposta.json();

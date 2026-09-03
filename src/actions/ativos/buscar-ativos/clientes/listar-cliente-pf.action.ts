@@ -9,7 +9,7 @@ export async function listarClientesPfAction() {
 
     if (!usuarioId) return [];
 
-    const resposta = await fetch(process.env.NEXT_PUBLIC_API_URL + "/cliente-pf", {
+    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cliente-pf?usuarioId=${usuarioId}`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
       cache: "no-store", 
