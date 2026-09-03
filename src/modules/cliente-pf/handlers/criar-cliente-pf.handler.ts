@@ -3,7 +3,21 @@ import { limparEmail } from "@/shared/utils/formatacao/limpar-email.util";
 import { apenasNumeros } from "@/shared/utils/formatacao/apenas-numeros.util";
 import { CriarClientePfDTO } from "../dto/criar-cliente-pf.dto";
 import { RespostaClientePfDTO } from "../dto/resposta-cliente-pf.dto";
-import { CriarClientePfUseCase } from "../use-cases/criar-cliente-pf.use-case";
+import { CriarClientePfUseCase, ListarClientesPfUseCase } from "../use-cases/criar-cliente-pf.use-case";
+import { ClientePf } from "@/shared/types/domain/ativos/clientes/ICliente-pf";
+
+export class ListarClientesPfHandler {
+  constructor(private readonly listarClientesPfUseCase: ListarClientesPfUseCase) {}
+
+  async handle(usuarioId: string): Promise<ClientePf[]> {
+    try {
+      return await this.listarClientesPfUseCase.execute(usuarioId);
+    } catch (error) {
+      console.error("[ListarClientesPfHandler] Erro:", error);
+      return [];
+    }
+  }
+}
 
 export class CriarClientePfHandler {
   constructor(private readonly criarClientePfUseCase: CriarClientePfUseCase) {}
