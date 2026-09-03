@@ -12,4 +12,5 @@ export interface IClientePfRepository {
   // Buscas em Lista
   buscarPorNome(nome: string): Promise<ClientePf[]>;
   buscarPorTelefone(telefone: string): Promise<ClientePf[]>;
+  listarPorUsuarioId(usuarioId: string): Promise<ClientePf[]>;
 }

@@ -14,4 +14,5 @@ export interface IClientePjRepository {
   buscarPorRazaoSocial(razaoSocial: string): Promise<ClientePj[]>;
   buscarPorNomeFantasia(nomeFantasia: string): Promise<ClientePj[]>;
   buscarPorSegmento(segmento: SegmentoEmpresa): Promise<ClientePj[]>;
+  listarPorUsuarioId(usuarioId: string): Promise<ClientePj[]>;
 }

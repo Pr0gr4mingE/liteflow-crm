@@ -40,4 +40,12 @@ export class ClientePfRepository implements IClientePfRepository {
     const clientes = await db.select().from(clientesPfTable).where(eq(clientesPfTable.telefone, telefone));
     return clientes as ClientePf[];
   }
+  async listarPorUsuarioId(usuarioId: string): Promise<ClientePf[]> {
+    const clientes = await db
+      .select()
+      .from(clientesPfTable)
+      .where(eq(clientesPfTable.usuarioResponsavelId, usuarioId));
+      
+    return clientes as ClientePf[];
+  }
 }

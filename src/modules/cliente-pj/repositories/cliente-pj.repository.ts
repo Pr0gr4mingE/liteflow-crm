@@ -48,4 +48,12 @@ export class ClientePjRepository implements IClientePjRepository {
     const clientes = await db.select().from(clientesPjTable).where(eq(clientesPjTable.segmento, segmento));
     return clientes as ClientePj[];
   }
+  async listarPorUsuarioId(usuarioId: string): Promise<ClientePj[]> {
+      const clientes = await db
+        .select()
+        .from(clientesPjTable)
+        .where(eq(clientesPjTable.usuarioResponsavelId, usuarioId));
+        
+      return clientes as ClientePj[];
+    }
 }
