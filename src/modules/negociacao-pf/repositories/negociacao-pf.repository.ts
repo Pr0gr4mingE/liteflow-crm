@@ -44,4 +44,13 @@ export class NegociacaoPfRepository implements INegociacaoPfRepository {
     const negociacoes = await db.select().from(negociacoesPfTable).where(between(negociacoesPfTable.dataPrevisaoFechamento, dataInicial, dataFinal));
     return negociacoes as NegociacaoPf[];
   }
+
+  async listarPorUsuarioId(usuarioId: string): Promise<NegociacaoPf[]> {
+    const negociacoes = await db
+      .select()
+      .from(negociacoesPfTable)
+      .where(eq(negociacoesPfTable.usuarioResponsavelId, usuarioId));
+      
+    return negociacoes as NegociacaoPf[];
+  }
 }

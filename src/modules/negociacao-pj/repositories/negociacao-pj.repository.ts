@@ -44,4 +44,13 @@ export class NegociacaoPjRepository implements INegociacaoPjRepository {
     const negociacoes = await db.select().from(negociacoesPjTable).where(between(negociacoesPjTable.dataPrevisaoFechamento, dataInicial, dataFinal));
     return negociacoes as NegociacaoPj[];
   }
+
+  async listarPorUsuarioId(usuarioId: string): Promise<NegociacaoPj[]> {
+    const negociacoes = await db
+      .select()
+      .from(negociacoesPjTable)
+      .where(eq(negociacoesPjTable.usuarioResponsavelId, usuarioId));
+      
+    return negociacoes as NegociacaoPj[];
+  }
 }

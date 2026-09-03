@@ -14,4 +14,5 @@ export interface INegociacaoPjRepository {
   buscarPorDataPrevisao(dataInicial: Date, dataFinal: Date): Promise<NegociacaoPj[]>;
   buscarPorTitulo(tiulo: string): Promise<NegociacaoPj[]>;
   buscarPorIntervaloDeValor(valorMin: number, valorMax: number): Promise<NegociacaoPj[]>;
+  listarPorUsuarioId(usuarioId: string): Promise<NegociacaoPj[]>;
 }

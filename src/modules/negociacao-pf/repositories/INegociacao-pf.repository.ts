@@ -14,4 +14,5 @@ export interface INegociacaoPfRepository {
   buscarPorDataPrevisao(dataInicial: Date, dataFinal: Date): Promise<NegociacaoPf[]>; // Geralmente buscamos por intervalo
   buscarPorTitulo(titulo: string): Promise<NegociacaoPf[]>;
   buscarPorIntervaloDeValor(valorMin: number, valorMax: number): Promise<NegociacaoPf[]>;
+  listarPorUsuarioId(usuarioId: string): Promise<NegociacaoPf[]>;
 }
