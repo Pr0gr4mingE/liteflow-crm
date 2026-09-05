@@ -66,6 +66,7 @@ export function usePipeline() {
     colunasDaPipeline,
     carregandoPipeline: isLoading,
     erro,
-    refetch
+    refetch,
+    negociacoes
   };
 }
