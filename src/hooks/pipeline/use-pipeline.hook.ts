@@ -1,35 +1,44 @@
 "use client";
 
 import { useState, useMemo } from "react";
-// Importa o hook de fetch puro que criamos antes
 import { usePipelineNegociacoes } from "./use-pipeline-negociacao.hook";
 import { KanbanColumnProps } from "@/shared/types/ui/kanban/kanban-column.props";
 import { KanbanCardProps } from "@/shared/types/ui/kanban/kanban-card.props";
 
 export type TipoFunil = "PF" | "PJ";
 
-// Estas fases devem bater exatamente com as strings que você salva no banco de dados!
-const FASES_PADRAO = [
-  { id: "PROSPECCAO", titulo: "Prospecção", cor: "bg-slate-200" },
-  { id: "QUALIFICACAO", titulo: "Qualificação", cor: "bg-blue-100" },
+// Fluxo B2C (Pessoa Física - Automação e Velocidade)
+const FASES_PF = [
+  { id: "CAPTURA", titulo: "Captura", cor: "bg-slate-200" },
+  { id: "ENGAJAMENTO", titulo: "Engajamento", cor: "bg-blue-100" },
+  { id: "CONVERSAO", titulo: "Conversão", cor: "bg-green-100" },
+  { id: "FIDELIZACAO", titulo: "Fidelização", cor: "bg-purple-100" },
+  { id: "DESISTENCIA", titulo: "Desistência", cor: "bg-red-100" }
+];
+
+// Fluxo B2B (Pessoa Jurídica - Consultivo)
+const FASES_PJ = [
+  { id: "LEAD", titulo: "Lead", cor: "bg-slate-200" },
+  { id: "CONTATO", titulo: "Contato", cor: "bg-blue-100" },
   { id: "PROPOSTA", titulo: "Proposta", cor: "bg-amber-100" },
-  { id: "NEGOCIACAO", titulo: "Negociação", cor: "bg-orange-100" },
-  { id: "FECHAMENTO", titulo: "Fechamento", cor: "bg-green-100" }
+  { id: "FECHADO", titulo: "Fechado", cor: "bg-green-100" },
+  { id: "INDEFERIDO", titulo: "Indeferido", cor: "bg-red-100" }
 ];
 
 export function usePipeline() {
   const [tipoFunil, setTipoFunil] = useState<TipoFunil>("PF");
   
-  // 1. Busca os dados brutos da API
   const { negociacoes, isLoading, erro, refetch } = usePipelineNegociacoes();
 
-  // 2. Formata e divide os dados em colunas usando useMemo (para performance)
   const colunasDaPipeline = useMemo<KanbanColumnProps[]>(() => {
-    // Separa os dados de acordo com a aba selecionada (PF ou PJ)
+    // 1. Filtra as negociações pela aba selecionada
     const negociacoesDoFunil = negociacoes.filter(n => n.tipo === tipoFunil);
 
-    // Constrói as colunas injetando os cards corretos dentro delas
-    return FASES_PADRAO.map(fase => {
+    // 2. Define qual array de fases usar com base no tipo
+    const fasesDoModelo = tipoFunil === "PF" ? FASES_PF : FASES_PJ;
+
+    // 3. Monta as colunas usando o mapa correto
+    return fasesDoModelo.map(fase => {
       const negociacoesDaFase = negociacoesDoFunil.filter(n => n.fase === fase.id);
 
       const cards: KanbanCardProps[] = negociacoesDaFase.map(n => ({
@@ -37,7 +46,9 @@ export function usePipeline() {
         titulo: n.titulo,
         subtitulo: n.dataPrevisaoFechamento ? `Previsão: ${n.dataPrevisaoFechamento}` : undefined,
         valorFormatado: new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(n.valor),
-        corDestaque: "azul",
+        // Adiciona uma lógica visual simples: cards de desistência/indeferido ficam vermelhos, fechados ficam verdes
+        corDestaque: (fase.id === "DESISTENCIA" || fase.id === "INDEFERIDO") ? "vermelho" : 
+                     (fase.id === "CONVERSAO" || fase.id === "FECHADO") ? "verde" : "azul",
       }));
 
       return {
