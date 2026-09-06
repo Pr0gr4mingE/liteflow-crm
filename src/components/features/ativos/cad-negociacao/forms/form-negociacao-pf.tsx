@@ -53,10 +53,11 @@ export function FormNegociacaoPf() {
         <div className="flex flex-col gap-1">
           <label htmlFor="fase" className="text-sm font-medium text-gray-700">Fase Atual *</label>
           <select id="fase" name="fase" required className="border p-2 rounded bg-white">
-            <option value="PROSPECCAO">Prospecção</option>
-            <option value="QUALIFICACAO">Qualificação</option>
-            <option value="PROPOSTA">Proposta Apresentada</option>
-            <option value="NEGOCIACAO">Em Negociação</option>
+            <option value="CAPTURA">Captura</option>
+            <option value="ENGAJAMENTO">Engajamento</option>
+            <option value="CONVERSAO">Conversão</option>
+            <option value="FIDELIZACAO">Fidelização</option>
+            <option value="DESISTENCIA">Desistência</option>
           </select>
         </div>
 

@@ -53,10 +53,11 @@ export function FormNegociacaoPj() {
         <div className="flex flex-col gap-1">
           <label htmlFor="fase" className="text-sm font-medium text-gray-700">Fase Atual da Conta *</label>
           <select id="fase" name="fase" required className="border p-2 rounded bg-white">
-            <option value="CONTATO_INICIAL">Contato Inicial</option>
-            <option value="REUNIAO_AGENDADA">Reunião Agendada</option>
-            <option value="POC_EM_ANDAMENTO">POC em Andamento</option>
-            <option value="EM_APROVACAO">Em Aprovação (Jurídico)</option>
+            <option value="LEAD">Lead</option>
+            <option value="CONTATO">Contato</option>
+            <option value="PROPOSTA">Proposta</option>
+            <option value="FECHADO">Fechado</option>
+            <option value="INDEFERIDO">Indeferido</option>
           </select>
         </div>
 
