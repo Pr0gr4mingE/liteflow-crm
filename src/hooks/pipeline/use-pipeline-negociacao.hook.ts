@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { listarNegociacoesPfAction } from "@/actions/ativos/buscar-ativos/negociacoes/listar-negociacoa-pf.action";
 import { listarNegociacoesPjAction } from "@/actions/ativos/buscar-ativos/negociacoes/listar-negociacao-pj.action";
+import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
 
 export type NegociacaoPipeline = {
   id: string;
@@ -11,10 +12,14 @@ export type NegociacaoPipeline = {
   fase: string;
   dataPrevisaoFechamento: string | null;
   tipo: "PF" | "PJ";
+  clienteNome: string;
 };
 
 // Tipagem para a resposta pura da API
-type NegociacaoApi = Omit<NegociacaoPipeline, "tipo"> & { valor: string | number };
+type NegociacaoApi = Omit<NegociacaoPipeline, "tipo" | "clienteNome"> & { 
+  valor: string | number;
+  cliente?: { nome: string }; 
+};
 
 export function usePipelineNegociacoes() {
   const [negociacoes, setNegociacoes] = useState<NegociacaoPipeline[]>([]);
@@ -32,12 +37,16 @@ export function usePipelineNegociacoes() {
       ...n,
       valor: Number(n.valor),
       tipo: "PF",
+      clienteNome: n.cliente?.nome || "Cliente Desconhecido",
+      dataPrevisaoFechamento: formatarDataPtBr(n.dataPrevisaoFechamento)
     }));
 
     const formatadoPj: NegociacaoPipeline[] = dadosPj.map((n: NegociacaoApi) => ({
       ...n,
       valor: Number(n.valor),
       tipo: "PJ",
+      clienteNome: n.cliente?.nome || "Empresa Desconhecida",
+      dataPrevisaoFechamento: formatarDataPtBr(n.dataPrevisaoFechamento)
     }));
 
     return [...formatadoPf, ...formatadoPj];
