@@ -3,6 +3,7 @@ import { CriarNegociacaoPjDTO } from "../dto/criar-negociacao-pj.dto";
 import { RespostaNegociacaoPjDTO } from "../dto/resposta-negociacao-pj.dto";
 import { CriarNegociacaoPjUseCase, ListarNegociacoesPjUseCase } from "../use-cases/criar-negociacao-pj.use-case";
 import { NegociacaoPj } from "@/shared/types/domain/ativos/negociacoes/INegociacao-pj";
+import { rehidratarData } from "@/shared/utils/formatacao/rehidratar-data.util";
 
 export class CriarNegociacaoPjHandler {
   constructor(private readonly criarNegociacaoPjUseCase: CriarNegociacaoPjUseCase) {}
@@ -12,6 +13,7 @@ export class CriarNegociacaoPjHandler {
       const dadosFormatados: CriarNegociacaoPjDTO = {
         ...dadosEntrada,
         titulo: capitalizarTexto(dadosEntrada.titulo),
+        dataPrevisaoFechamento: rehidratarData(dadosEntrada.dataPrevisaoFechamento),
       };
 
       return await this.criarNegociacaoPjUseCase.execute(dadosFormatados);

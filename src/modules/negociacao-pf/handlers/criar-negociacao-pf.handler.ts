@@ -3,6 +3,7 @@ import { CriarNegociacaoPfDTO } from "../dto/criar-negociacao-pf.dto";
 import { RespostaNegociacaoPfDTO } from "../dto/resposta-negociacao-pf.dto";
 import { CriarNegociacaoPfUseCase,ListarNegociacoesPfUseCase } from "../use-cases/criar-negociacao-pf.use-case";
 import { NegociacaoPf } from "@/shared/types/domain/ativos/negociacoes/INegociacao-pf";
+import { rehidratarData } from "@/shared/utils/formatacao/rehidratar-data.util";
 
 export class CriarNegociacaoPfHandler {
   constructor(private readonly criarNegociacaoPfUseCase: CriarNegociacaoPfUseCase) {}
@@ -12,6 +13,7 @@ export class CriarNegociacaoPfHandler {
       const dadosFormatados: CriarNegociacaoPfDTO = {
         ...dadosEntrada,
         titulo: capitalizarTexto(dadosEntrada.titulo),
+        dataPrevisaoFechamento: rehidratarData(dadosEntrada.dataPrevisaoFechamento),
       };
 
       return await this.criarNegociacaoPfUseCase.execute(dadosFormatados);
