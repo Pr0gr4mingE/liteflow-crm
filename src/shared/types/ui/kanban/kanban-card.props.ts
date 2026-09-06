@@ -7,4 +7,5 @@ export interface KanbanCardProps {
   valorFormatado?: string; 
   corDestaque?: CorDestaque; 
   aoClicar?: (id: string) => void; 
+  aoClicarAdicionarTarefa?: (id: string) => void;
 }
