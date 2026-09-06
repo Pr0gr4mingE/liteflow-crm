@@ -5,6 +5,7 @@ import { INegociacaoPjRepository } from "./INegociacao-pj.repository";
 import { CriarNegociacaoPjDTO } from "../dto/criar-negociacao-pj.dto";
 import { NegociacaoPj } from "@/shared/types/domain/ativos/negociacoes/INegociacao-pj";
 import { FaseNegociacaoPj } from "@/shared/utils/types/fase-negociacao-pj.type";
+import { clientesPjTable } from "@/infrastructure/database/schemas/cliente-pj.schema";
 
 export class NegociacaoPjRepository implements INegociacaoPjRepository {
   async salvar(dados: CriarNegociacaoPjDTO): Promise<NegociacaoPj> {
@@ -46,11 +47,23 @@ export class NegociacaoPjRepository implements INegociacaoPjRepository {
   }
 
   async listarPorUsuarioId(usuarioId: string): Promise<NegociacaoPj[]> {
-    const negociacoes = await db
-      .select()
+   const resultados = await db
+      .select({
+        // Seleciona a negociação inteira sem precisar listar campo por campo
+        negociacao: negociacoesPjTable,
+        // Extrai apenas a coluna 'nome' da tabela do cliente vinculado
+        clienteNome: clientesPjTable.nomeFantasia, 
+      })
       .from(negociacoesPjTable)
+      .leftJoin(clientesPjTable, eq(negociacoesPjTable.clienteId, clientesPjTable.id))
       .where(eq(negociacoesPjTable.usuarioResponsavelId, usuarioId));
       
+    // Remonta o array para acoplar o objeto cliente aninhado exatamente como o Hook espera
+    const negociacoes = resultados.map(({ negociacao, clienteNome }) => ({
+      ...negociacao,
+      cliente: { nome: clienteNome || "Empresa Desconhecida" },
+    }));
+
     return negociacoes as NegociacaoPj[];
   }
 }

@@ -5,6 +5,7 @@ import { INegociacaoPfRepository } from "./INegociacao-pf.repository";
 import { CriarNegociacaoPfDTO } from "../dto/criar-negociacao-pf.dto";
 import { NegociacaoPf } from "@/shared/types/domain/ativos/negociacoes/INegociacao-pf";
 import { FaseNegociacaoPf } from "@/shared/utils/types/fase-negociacao-pf.type";
+import { clientesPfTable } from "@/infrastructure/database/schemas/cliente-pf.schema";
 
 export class NegociacaoPfRepository implements INegociacaoPfRepository {
   async salvar(dados: CriarNegociacaoPfDTO): Promise<NegociacaoPf> {
@@ -46,11 +47,24 @@ export class NegociacaoPfRepository implements INegociacaoPfRepository {
   }
 
   async listarPorUsuarioId(usuarioId: string): Promise<NegociacaoPf[]> {
-    const negociacoes = await db
-      .select()
+   const resultados = await db
+      .select({
+        // Seleciona a negociação inteira sem precisar listar campo por campo
+        negociacao: negociacoesPfTable,
+        // Extrai apenas a coluna 'nome' da tabela do cliente vinculado
+        clienteNome: clientesPfTable.nome, 
+      })
       .from(negociacoesPfTable)
+      .leftJoin(clientesPfTable, eq(negociacoesPfTable.clienteId, clientesPfTable.id))
       .where(eq(negociacoesPfTable.usuarioResponsavelId, usuarioId));
       
+    // Remonta o array para acoplar o objeto cliente aninhado exatamente como o Hook espera
+    const negociacoes = resultados.map(({ negociacao, clienteNome }) => ({
+      ...negociacao,
+      cliente: { nome: clienteNome || "Cliente Desconhecido" },
+    }));
+
     return negociacoes as NegociacaoPf[];
   }
+
 }
