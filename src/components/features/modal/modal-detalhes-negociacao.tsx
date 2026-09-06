@@ -44,18 +44,26 @@ export function DetalhesNegociacaoModal({ isOpen, onClose, negociacao }: Detalhe
             </span>
           </div>
         </div>
+        <div>
+          <h3 className="text-xs font-semibold uppercase text-slate-500">
+            {negociacao.tipo === "PF" ? "Cliente" : "Empresa"}
+          </h3>
+          <p className="text-sm text-slate-900 font-medium">
+            {negociacao.clienteNome}
+          </p>
+        </div>
 
         {/* Informações Secundárias */}
         <div className="flex flex-col gap-1 border-b border-slate-100 pb-3 mt-2">
           <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Fase Atual (ID do Banco)</span>
           <span className="text-sm font-medium text-slate-900">{negociacao.fase}</span>
         </div>
-
-        <div className="flex flex-col gap-1 pb-2">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Previsão de Fechamento</span>
-          <span className="text-sm font-medium text-slate-900">
-            {negociacao.dataPrevisaoFechamento || "Nenhuma data informada."}
-          </span>
+        <div>
+          <h3 className="text-xs font-semibold uppercase text-slate-500">Previsão</h3>
+          <p className="text-sm text-slate-900">
+            {/* Imprime direto, o hook já resolveu o formato e o timezone! */}
+            {negociacao.dataPrevisaoFechamento} 
+          </p>
         </div>
         
         {/* Aqui no futuro podemos colocar um formulário de edição ou histórico de atividades (Sprint 6+) */}
