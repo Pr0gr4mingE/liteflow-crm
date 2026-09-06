@@ -6,12 +6,15 @@ import { KanbanColumnProps } from "@/shared/types/ui/kanban/kanban-column.props"
 
 export function useKanban(colunasIniciais: KanbanColumnProps[]) {
   const [colunas, setColunas] = useState<KanbanColumnProps[]>(colunasIniciais);
-  const [colunasAnteriores, setColunasAnteriores] = useState<KanbanColumnProps[]>(colunasIniciais);
+  const [prevIniciais, setPrevIniciais] = useState<KanbanColumnProps[]>(colunasIniciais);
 
-  // Sincroniza o estado local se a API retornar dados novos (troca de aba ou refetch).
-  // Feito diretamente no render, eliminando o useEffect e o erro de cascading render.
-  if (colunasIniciais !== colunasAnteriores) {
-    setColunasAnteriores(colunasIniciais);
+  // 1. Padrão oficial do React: Atualizar estado derivado durante o render.
+  // 2. Usamos stringify para comparar os VALORES (ignora funções), o que blinda
+  // o componente contra o loop infinito causado por recriação de arrays no componente pai.
+  const dadosMudaram = JSON.stringify(colunasIniciais) !== JSON.stringify(prevIniciais);
+
+  if (dadosMudaram) {
+    setPrevIniciais(colunasIniciais);
     setColunas(colunasIniciais);
   }
 
