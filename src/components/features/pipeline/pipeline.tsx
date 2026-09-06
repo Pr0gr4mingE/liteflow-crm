@@ -5,9 +5,10 @@ import { KanbanBoard as KanbanBoardUI } from "@/components/ui/kanban/kanban-boar
 import { useKanban } from "@/hooks/kanban/use-kanban.hook";
 import { usePipeline } from "@/hooks/pipeline/use-pipeline.hook";
 import { DetalhesNegociacaoModal } from "@/components/features/modal/modal-detalhes-negociacao";
+// 1. Import do novo Modal Wrapper
+import { CadastroTarefaFeature } from "@/components/features/ativos/cad-tarefas/cad-tarefa";
 
 export function PipelineFeature() {
-  // 1. Extraímos também as 'negociacoes' brutas para poder alimentar o modal com os dados completos
   const { 
     tipoFunil, 
     setTipoFunil, 
@@ -20,22 +21,28 @@ export function PipelineFeature() {
   
   const { colunas, handleDragEnd } = useKanban(colunasDaPipeline);
 
-  // 2. Estado local da Feature para controlar qual modal está aberto
   const [idSelecionado, setIdSelecionado] = useState<string | null>(null);
+  
+  // 2. Estado local para controlar o modal de tarefas
+  const [modalTarefaAberto, setModalTarefaAberto] = useState(false);
+  const [contextoTarefa, setContextoTarefa] = useState<{ id: string; tipo: "PF" | "PJ" } | null>(null);
 
-  // 3. Injetamos a função 'aoClicar' nos cards de forma dinâmica
-  // Usamos useMemo para não recriar essa lista a cada renderização à toa
   const colunasComClique = useMemo(() => {
     return colunas.map((coluna) => ({
       ...coluna,
       cards: coluna.cards.map((card) => ({
         ...card,
         aoClicar: (id: string) => setIdSelecionado(id),
+        // 3. Injetamos o callback do botão de adicionar tarefa nos cards
+        aoAdicionarTarefa: (id: string) => {
+          setContextoTarefa({ id, tipo: tipoFunil });
+          setModalTarefaAberto(true);
+        },
       })),
     }));
-  }, [colunas]);
+    // É obrigatório colocar tipoFunil na dependência para ele pegar o contexto B2B/B2C atualizado
+  }, [colunas, tipoFunil]); 
 
-  // 4. Busca os dados completos da negociação clicada usando o ID
   const negociacaoSelecionada = useMemo(() => {
     if (!idSelecionado || !negociacoes) return null;
     return negociacoes.find((n) => n.id === idSelecionado) || null;
@@ -43,7 +50,6 @@ export function PipelineFeature() {
 
   return (
     <div className="flex h-full flex-col">
-      {/* Header e Controles */}
       <div className="mb-6 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Pipeline de Vendas</h1>
@@ -52,7 +58,6 @@ export function PipelineFeature() {
           </p>
         </div>
         
-        {/* Toggle PF / PJ */}
         <div className="flex w-max items-center gap-2 rounded-lg bg-slate-100 p-1">
           <button 
             onClick={() => setTipoFunil("PF")} 
@@ -73,7 +78,6 @@ export function PipelineFeature() {
         </div>
       </div>
 
-      {/* Tratamento de Erro Seguro */}
       {erro && (
         <div className="mb-4 flex items-center justify-between rounded-lg border border-red-200 bg-red-50 p-4">
           <p className="text-sm text-red-600">{erro}</p>
@@ -83,7 +87,6 @@ export function PipelineFeature() {
         </div>
       )}
 
-      {/* O componente visual agora recebe as colunas com o evento de clique já injetado */}
       <KanbanBoardUI 
         colunas={colunasComClique} 
         onDragEnd={handleDragEnd} 
@@ -91,11 +94,20 @@ export function PipelineFeature() {
         tipoFunil={tipoFunil}  
       />
 
-      {/* O Modal consome o estado da Feature */}
       <DetalhesNegociacaoModal
         isOpen={!!idSelecionado}
         onClose={() => setIdSelecionado(null)}
         negociacao={negociacaoSelecionada}
+      />
+
+      {/* 4. Renderização independente do novo modal */}
+      <CadastroTarefaFeature
+        isOpen={modalTarefaAberto}
+        onClose={() => {
+          setModalTarefaAberto(false);
+          setContextoTarefa(null);
+        }}
+        negociacaoSelecionada={contextoTarefa}
       />
     </div>
   );
