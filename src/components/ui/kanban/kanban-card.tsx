@@ -21,35 +21,36 @@ export function KanbanCard({ card, index }: { card: KanbanCardProps; index: numb
             <div className={`absolute left-0 top-0 h-full w-1 rounded-l-lg ${MAPA_CORES[card.corDestaque]}`} />
           )}
 
-          {/* Cabeçalho do Card com Botão de Adicionar */}
           <div className="flex justify-between items-start">
             <h4 className="text-sm font-semibold text-slate-900 pr-4">{card.titulo}</h4>
-            
-            {/* 👇 Novo Botão de Ação Secundária (aparece no hover) */}
-            {card.aoClicarAdicionarTarefa && (
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation(); // Impede que o card inteiro seja clicado
-                  card.aoClicarAdicionarTarefa!(card.id);
-                }}
-                className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded"
-                title="Criar Nova Tarefa"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-              </button>
-            )}
           </div>
 
           {card.subtitulo && <p className="text-xs text-slate-500">{card.subtitulo}</p>}
 
-          {card.valorFormatado && (
-            <div className="mt-2 inline-block rounded-md bg-slate-50 px-2 py-1 w-max">
-              <span className="text-xs font-medium text-slate-700">{card.valorFormatado}</span>
-            </div>
-          )}
+          <div className="mt-2 flex items-center w-full">
+            {card.valorFormatado && (
+              <div className="inline-block rounded-md bg-slate-50 px-2 py-1 w-max">
+                <span className="text-xs font-medium text-slate-700">{card.valorFormatado}</span>
+              </div>
+            )}
+
+            {card.aoClicarAdicionarTarefa && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  card.aoClicarAdicionarTarefa!(card.id);
+                }}
+                className="ml-auto flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1 text-[11px] font-medium text-slate-600 transition-colors hover:border-blue-300 hover:bg-blue-50 hover:text-blue-700"
+                title="Criar Nova Tarefa"
+              >
+                <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+                Nova Tarefa
+              </button>
+            )}
+          </div>
         </div>
       )}
     </Draggable>
