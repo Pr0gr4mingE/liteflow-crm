@@ -22,7 +22,7 @@ export function useLogin() {
       setMensagem("Login realizado com sucesso! Redirecionando..."); 
       
       // O Cookie já está salvo pela Server Action. Só mandar pra rota privada!
-      router.push("/dashboard"); 
+      router.push("/painel"); 
     }
   };
 
