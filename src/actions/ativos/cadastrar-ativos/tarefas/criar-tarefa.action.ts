@@ -7,6 +7,7 @@ import { StatusTarefa } from "@/shared/utils/types/status-tarefa.type";
 import { TipoTarefa } from "@/shared/utils/types/tipo-tarefa.type";
 import { TipoTarefaB2b } from "@/shared/utils/types/tipo-tarefa-b2b.type";
 import { TipoTarefaB2c } from "@/shared/utils/types/tipo-tarefa-b2c.type";
+import { formatarDataParaApi } from "@/shared/utils/formatacao/data-iso-8601.util";
 
 export async function criarTarefaAction(formData: FormData) {
   // 1. Valida a autenticação
@@ -22,13 +23,15 @@ export async function criarTarefaAction(formData: FormData) {
   const negociacaoId = formData.get("negociacaoId") as string | null;
   const dataVencimentoStr = formData.get("dataVencimento") as string;
 
+  const dataVencimentoISO = formatarDataParaApi(dataVencimentoStr);
+
   // 2. Extrai e tipa os dados do formulário nativo (FormData)
   const payload: CriarTarefaFormData = {
     titulo: formData.get("titulo") as string,
     tipo: formData.get("tipo") as TipoTarefa | TipoTarefaB2b | TipoTarefaB2c,
     status: formData.get("status") as StatusTarefa,
     descricao: (formData.get("descricao") as string) || undefined,
-    dataVencimento: new Date(dataVencimentoStr),
+    dataVencimento: dataVencimentoISO ? new Date(dataVencimentoISO) : new Date(),
     clienteId: clienteId || undefined,
     negociacaoId: negociacaoId || undefined,
   };
@@ -37,6 +40,7 @@ export async function criarTarefaAction(formData: FormData) {
   const payloadDaApi = {
     ...payload,
     usuarioResponsavelId: usuarioId,
+    dataVencimento: dataVencimentoISO,
   };
 
   try {
