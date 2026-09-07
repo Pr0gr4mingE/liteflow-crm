@@ -18,15 +18,15 @@ export function DashboardHeader({ tipoFunil, setTipoFunil, carregando }: Dashboa
   return (
     <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900 mb-1">
           Dashboard
         </h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-sm text-slate-500">
           Acompanhe suas métricas, tarefas e negociações em andamento.
         </p>
       </div>
 
-      <div className="flex bg-gray-100 dark:bg-gray-800 p-1 rounded-lg w-fit">
+      <div className="flex bg-slate-200 p-1 rounded-lg w-fit border border-slate-300/50">
         {abas.map((aba) => (
           <button
             key={aba.valor}
@@ -35,8 +35,8 @@ export function DashboardHeader({ tipoFunil, setTipoFunil, carregando }: Dashboa
             className={`
               px-4 py-2 text-sm font-medium rounded-md transition-all duration-200
               ${tipoFunil === aba.valor 
-                ? "bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm" 
-                : "text-gray-600 dark:text-gray-300 hover:text-gray-900 hover:bg-gray-200/50 dark:hover:bg-gray-700/50"
+                ? "bg-white text-slate-900 shadow-sm" 
+                : "text-slate-600 hover:text-slate-900 hover:bg-slate-300/50"
               }
               ${carregando ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}
             `}

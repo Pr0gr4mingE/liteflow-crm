@@ -10,7 +10,7 @@ export function DashboardKpis({ kpis, carregando }: DashboardKpisProps) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="h-32 bg-gray-200 dark:bg-gray-800 rounded-xl animate-pulse" />
+          <div key={i} className="h-32 bg-slate-200 rounded-xl border border-slate-300/50 animate-pulse" />
         ))}
       </div>
     );
@@ -23,17 +23,17 @@ export function DashboardKpis({ kpis, carregando }: DashboardKpisProps) {
     {
       titulo: "Receita Total",
       valor: formatarMoeda(kpis.receitaTotal),
-      cor: "text-green-600 dark:text-green-400",
+      cor: "text-emerald-600", 
     },
     {
       titulo: "Ticket Médio",
       valor: formatarMoeda(kpis.ticketMedio),
-      cor: "text-blue-600 dark:text-blue-400",
+      cor: "text-blue-600",
     },
     {
       titulo: "Taxa de Conversão",
       valor: `${kpis.taxaConversao.toFixed(1)}%`,
-      cor: "text-purple-600 dark:text-purple-400",
+      cor: "text-fuchsia-600", 
     }
   ];
 
@@ -42,12 +42,12 @@ export function DashboardKpis({ kpis, carregando }: DashboardKpisProps) {
       {metrics.map((metric, index) => (
         <div 
           key={index} 
-          className="bg-white dark:bg-gray-900 p-6 rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col justify-center"
+          className="bg-slate-100 p-6 rounded-xl border border-slate-200 shadow-sm flex flex-col justify-center"
         >
-          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          <span className="text-sm font-medium text-slate-500 mb-3">
             {metric.titulo}
           </span>
-          <span className={`text-3xl font-bold mt-2 ${metric.cor}`}>
+          <span className={`text-4xl font-bold tracking-tight ${metric.cor}`}>
             {metric.valor}
           </span>
         </div>
