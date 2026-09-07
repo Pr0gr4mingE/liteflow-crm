@@ -28,20 +28,27 @@ export function PipelineFeature() {
   const [contextoTarefa, setContextoTarefa] = useState<{ id: string; tipo: "PF" | "PJ" } | null>(null);
 
   const colunasComClique = useMemo(() => {
+    // 👇 BLINDAGEM 1: Previne crash se as colunas vierem undefined do backend
+    if (!colunas || !Array.isArray(colunas)) {
+      return [];
+    }
+
     return colunas.map((coluna) => ({
       ...coluna,
-      cards: coluna.cards.map((card) => ({
-        ...card,
-        aoClicar: (id: string) => setIdSelecionado(id),
-        // 3. Injetamos o callback do botão de adicionar tarefa nos cards
-        aoAdicionarTarefa: (id: string) => {
-          setContextoTarefa({ id, tipo: tipoFunil });
-          setModalTarefaAberto(true);
-        },
-      })),
+      // 👇 BLINDAGEM 2: Previne crash se a coluna vier sem o array de cards
+      cards: Array.isArray(coluna.cards) 
+        ? coluna.cards.map((card) => ({
+            ...card,
+            aoClicar: (id: string) => setIdSelecionado(id),
+            // Nome da propriedade corrigido
+            aoClicarAdicionarTarefa: (id: string) => {
+              setContextoTarefa({ id, tipo: tipoFunil });
+              setModalTarefaAberto(true);
+            },
+          }))
+        : [],
     }));
-    // É obrigatório colocar tipoFunil na dependência para ele pegar o contexto B2B/B2C atualizado
-  }, [colunas, tipoFunil]); 
+  }, [colunas, tipoFunil]);
 
   const negociacaoSelecionada = useMemo(() => {
     if (!idSelecionado || !negociacoes) return null;
