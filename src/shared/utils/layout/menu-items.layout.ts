@@ -4,7 +4,7 @@ import {
 } from "lucide-react";
 
 export const MENU_ITEMS = [
-  { nome: "Dashboard Kanban", href: "/dashboard", icone: LayoutDashboard },
+  { nome: "Dashboard Kanban", href: "/painel", icone: LayoutDashboard },
   { nome: "Pipeline", href: "/pipeline", icone: KanbanSquare },
   { nome: "Negociações", href: "/negociacoes", icone: Briefcase },
   { nome: "Clientes", href: "/clientes", icone: Users },
