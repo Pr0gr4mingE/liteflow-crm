@@ -40,9 +40,15 @@ export async function criarNegociacaoPfAction(formData: FormData) {
     });
 
     const dados = await resposta.json();
-    if (!resposta.ok) throw new Error(dados.mensagem || "Erro na API");
 
-    return { sucesso: true, mensagem: "Negociação PF criada com sucesso!" };
+    if (!resposta.ok || !dados.sucesso) {
+      return {
+        sucesso: false,
+        mensagem: dados.mensagem || "Não foi possível criar a negociação PF.",
+      };
+    }
+
+    return { sucesso: true, mensagem: dados.mensagem || "Negociação PF criada com sucesso!" };
   } catch (error) {
     console.error("[Action Error] Erro ao criar Negociação PF:", error);
     return { sucesso: false, mensagem: "Erro interno de conexão com a API." };

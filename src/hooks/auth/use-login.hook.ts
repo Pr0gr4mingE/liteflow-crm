@@ -18,12 +18,12 @@ export function useLogin() {
     if (!resultado.sucesso) {
       setMensagem(resultado.mensagem || "Credenciais inválidas.");
       setCarregando(false);
-    } else {
-      setMensagem("Login realizado com sucesso! Redirecionando..."); 
-      
-      // O Cookie já está salvo pela Server Action. Só mandar pra rota privada!
-      router.push("/painel"); 
+      return;
     }
+
+    setMensagem("Login realizado com sucesso! Redirecionando...");
+    router.refresh();
+    router.push("/painel");
   };
 
   return { handleSubmit, carregando, mensagem };

@@ -46,7 +46,11 @@ export function FormLogin() {
       </div>
 
       {mensagem && (
-        <p className="text-sm text-center font-medium mt-3 text-red-500">
+        <p
+          className={`text-sm text-center font-medium mt-3 ${
+            mensagem.includes("sucesso") ? "text-emerald-600" : "text-red-500"
+          }`}
+        >
           {mensagem}
         </p>
       )}

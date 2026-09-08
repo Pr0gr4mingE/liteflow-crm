@@ -51,9 +51,15 @@ export async function criarTarefaAction(formData: FormData) {
     });
 
     const dados = await resposta.json().catch(() => ({}));
-    if (!resposta.ok) throw new Error(dados.mensagem || dados.error || "Erro na API");
 
-    return { sucesso: true, mensagem: "Tarefa criada com sucesso!" };
+    if (!resposta.ok || !dados.sucesso) {
+      return {
+        sucesso: false,
+        mensagem: dados.mensagem || dados.error || "Não foi possível criar a tarefa.",
+      };
+    }
+
+    return { sucesso: true, mensagem: dados.mensagem || "Tarefa criada com sucesso!" };
   } catch (error) {
     console.error("[Action Error] Erro ao criar Tarefa:", error);
     return { sucesso: false, mensagem: "Erro interno de conexão com a API." };

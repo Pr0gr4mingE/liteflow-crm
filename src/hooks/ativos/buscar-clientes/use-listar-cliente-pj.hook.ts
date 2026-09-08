@@ -1,17 +1,11 @@
-// src/hooks/ativos/buscar-clientes/use-listar-cliente-pj.ts
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
 import { listarClientesPjAction } from "@/actions/ativos/buscar-ativos/clientes/listar-cliente-pj.action";
-
-export interface ClientePjResumo {
-  id: string;
-  razaoSocial: string;
-  email: string;
-}
+import { ClientePj } from "@/shared/types/domain/ativos/clientes/ICliente-pj";
 
 export function useListarClientesPj() {
-  const [clientes, setClientes] = useState<ClientePjResumo[]>([]);
+  const [clientes, setClientes] = useState<ClientePj[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 

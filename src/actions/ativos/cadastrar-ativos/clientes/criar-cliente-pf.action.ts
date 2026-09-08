@@ -35,9 +35,19 @@ export async function criarClientePfAction(formData: FormData) {
     });
 
     const dados = await resposta.json();
-    if (!resposta.ok) throw new Error(dados.mensagem || "Erro na API");
 
-    return { sucesso: true, id: dados.id, mensagem: "Cliente PF criado com sucesso!" };
+    if (!resposta.ok || !dados.sucesso) {
+      return {
+        sucesso: false,
+        mensagem: dados.mensagem || "Não foi possível cadastrar o cliente.",
+      };
+    }
+
+    return {
+      sucesso: true,
+      id: dados.dados?.id,
+      mensagem: dados.mensagem || "Cliente PF criado com sucesso!",
+    };
   } catch (error) {
     console.error("[Action Error] Erro ao criar Cliente PF:", error);
     return { sucesso: false, mensagem: "Erro interno de conexão com a API." };

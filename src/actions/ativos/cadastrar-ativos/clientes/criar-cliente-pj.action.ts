@@ -38,9 +38,19 @@ export async function criarClientePjAction(formData: FormData) {
     });
 
     const dados = await resposta.json();
-    if (!resposta.ok) throw new Error(dados.mensagem || "Erro na API");
 
-    return { sucesso: true, id: dados.id, mensagem: "Empresa criada com sucesso!" };
+    if (!resposta.ok || !dados.sucesso) {
+      return {
+        sucesso: false,
+        mensagem: dados.mensagem || "Não foi possível cadastrar a empresa.",
+      };
+    }
+
+    return {
+      sucesso: true,
+      id: dados.dados?.id,
+      mensagem: dados.mensagem || "Empresa criada com sucesso!",
+    };
   } catch (error) {
     console.error("[Action Error] Erro ao criar Cliente PJ:", error);
     return { sucesso: false, mensagem: "Erro interno de conexão com a API." };
