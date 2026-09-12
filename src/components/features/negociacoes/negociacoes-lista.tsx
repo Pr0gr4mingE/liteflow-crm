@@ -1,6 +1,6 @@
 import { Briefcase, User, Calendar, Banknote } from "lucide-react";
 import { NegociacaoPfListagem} from "@/shared/types/ui/listagem/negociacoes/negociacao-pf-listagem.type";
-import { TipoNegociacao } from "@/hooks/negociacoes/use-negociacoes.hook";
+import { TipoNegociacao } from "@/hooks/listagem/negociacoes/use-negociacoes.hook";
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
 import { obterLabelFaseNegociacao } from "@/shared/utils/negociacoes/label-fase-negociacao.util";
 import { NegociacaoPjListagem } from "@/shared/types/ui/listagem/negociacoes/negociacao-pj-listagem.type";

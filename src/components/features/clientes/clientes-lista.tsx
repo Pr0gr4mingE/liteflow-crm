@@ -1,7 +1,7 @@
 import { Mail, Phone, Building2, User } from "lucide-react";
 import { ClientePf } from "@/shared/types/domain/ativos/clientes/ICliente-pf";
 import { ClientePj } from "@/shared/types/domain/ativos/clientes/ICliente-pj";
-import { TipoCliente } from "@/hooks/clientes/use-clientes.hook";
+import { TipoCliente } from "@/hooks/listagem/clientes/use-clientes.hook";
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
 
 interface ClientesListaProps {

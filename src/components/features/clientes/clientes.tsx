@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Plus, Search, RefreshCw } from "lucide-react";
-import { useClientes } from "@/hooks/clientes/use-clientes.hook";
+import { useClientes } from "@/hooks/listagem/clientes/use-clientes.hook";
 import { ClientesLista } from "./clientes-lista";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

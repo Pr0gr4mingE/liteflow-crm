@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Plus, Search, RefreshCw } from "lucide-react";
-import { useNegociacoes } from "@/hooks/negociacoes/use-negociacoes.hook";
+import { useNegociacoes } from "@/hooks/listagem/negociacoes/use-negociacoes.hook";
 import { NegociacoesLista } from "./negociacoes-lista";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
