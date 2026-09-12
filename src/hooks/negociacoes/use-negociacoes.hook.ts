@@ -3,11 +3,9 @@
 import { useMemo, useState } from "react";
 import { useListarNegociacoesPf } from "@/hooks/ativos/buscar-negociacoes/use-listar-negociacao-pf.hook";
 import { useListarNegociacoesPj } from "@/hooks/ativos/buscar-negociacoes/use-listar-negociacao-pj.hook";
-import {
-  NegociacaoPfListagem,
-  NegociacaoPjListagem,
-} from "@/shared/types/ui/negociacoes/negociacao-listagem.type";
+import { NegociacaoPfListagem } from "@/shared/types/ui/listagem/negociacoes/negociacao-pf-listagem.type";
 import { obterLabelFaseNegociacao } from "@/shared/utils/negociacoes/label-fase-negociacao.util";
+import { NegociacaoPjListagem } from "@/shared/types/ui/listagem/negociacoes/negociacao-pj-listagem.type";
 
 export type TipoNegociacao = "PF" | "PJ";
 

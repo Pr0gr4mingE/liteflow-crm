@@ -1,7 +1,7 @@
 "use server";
 
 import { cookies } from "next/headers";
-import { NegociacaoPjListagem } from "@/shared/types/ui/negociacoes/negociacao-listagem.type";
+import { NegociacaoPjListagem } from "@/shared/types/ui/listagem/negociacoes/negociacao-pj-listagem.type"; 
 
 export async function listarNegociacoesPjAction(): Promise<NegociacaoPjListagem[]> {
   try {

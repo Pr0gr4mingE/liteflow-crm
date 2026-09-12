@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { listarNegociacoesPjAction } from "@/actions/ativos/buscar-ativos/negociacoes/listar-negociacao-pj.action";
-import { NegociacaoPjListagem } from "@/shared/types/ui/negociacoes/negociacao-listagem.type";
+import { NegociacaoPjListagem } from "@/shared/types/ui/listagem/negociacoes/negociacao-pj-listagem.type"; 
 
 export function useListarNegociacoesPj() {
   const [negociacoes, setNegociacoes] = useState<NegociacaoPjListagem[]>([]);
