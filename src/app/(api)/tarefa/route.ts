@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { makeCriarTarefaHandler } from "@/modules/tarefa/factories/criar-tarefa.factory";
+import { makeListarTarefasHandler } from "@/modules/tarefa/factories/listar-tarefa.factory";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,6 +18,28 @@ export async function POST(req: NextRequest) {
     console.error("[API Tarefa] Erro não tratado:", error);
     return NextResponse.json(
       { sucesso: false, mensagem: "Erro interno no servidor." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const usuarioId = searchParams.get("usuarioId");
+
+    if (!usuarioId) {
+      return NextResponse.json({ sucesso: false, mensagem: "ID do usuário não fornecido" }, { status: 400 });
+    }
+
+    const handler = makeListarTarefasHandler();
+    const resposta = await handler.handle(usuarioId);
+
+    return NextResponse.json(resposta, { status: 200 });
+  } catch (error) {
+    console.error("[API Tarefa GET] Erro não tratado:", error);
+    return NextResponse.json(
+      { sucesso: false, mensagem: "Erro interno no servidor." }, 
       { status: 500 }
     );
   }
