@@ -26,6 +26,7 @@ export function usePerfil() {
           }
         }
       } catch (error) {
+        console.error("[usePerfil]:", error); // <-- Agora a variável está sendo usada!
         if (montado) setErro("Falha ao se comunicar com o servidor.");
       } finally {
         if (montado) setCarregando(false);
