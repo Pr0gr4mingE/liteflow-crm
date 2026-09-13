@@ -1,6 +1,6 @@
 import { ClientePfRepository } from "../repositories/cliente-pf.repository";
-import { ListarClientesPfUseCase } from "../use-cases/criar-cliente-pf.use-case";
-import { ListarClientesPfHandler } from "../handlers/criar-cliente-pf.handler";
+import { ListarClientesPfUseCase } from "../use-cases/listar-cliente-pf.use-case";
+import { ListarClientesPfHandler } from "../handlers/listar-cliente-pf.handler";
 
 export const makeListarClientesPfHandler = (): ListarClientesPfHandler => {
   const repository = new ClientePfRepository();
