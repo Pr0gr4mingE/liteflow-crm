@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { makeCriarUsuarioHandler } from "@/modules/usuario/factories/criar-usuario.factory";
 import { makeBuscarUsuarioPorIdHandler } from "@/modules/usuario/factories/buscar-usuario.factory";
+import { makeAtualizarUsuarioHandler } from "@/modules/usuario/factories/atualizar-usuario.factory";
 
 export async function POST(req: NextRequest) {
   try {
@@ -48,6 +49,40 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(resposta, { status: 200 });
   } catch (error) {
     console.error("[API Usuario GET] Erro não tratado:", error);
+    return NextResponse.json(
+      { sucesso: false, mensagem: "Erro interno no servidor." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function PATCH(req: NextRequest) {
+  try {
+    // Pegamos o ID da URL, mesmo padrão do GET
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { sucesso: false, mensagem: "ID do usuário não fornecido." },
+        { status: 400 }
+      );
+    }
+
+    // Pegamos os dados que o Front-end quer atualizar
+    const dadosEntrada = await req.json();
+    
+    const handler = makeAtualizarUsuarioHandler();
+    const resposta = await handler.handle(id, dadosEntrada);
+
+    if (!resposta.sucesso) {
+      const statusError = resposta.mensagem === "Usuário não encontrado." ? 404 : 400;
+      return NextResponse.json(resposta, { status: statusError });
+    }
+
+    return NextResponse.json(resposta, { status: 200 });
+  } catch (error) {
+    console.error("[API Usuario PATCH] Erro não tratado:", error);
     return NextResponse.json(
       { sucesso: false, mensagem: "Erro interno no servidor." },
       { status: 500 }
