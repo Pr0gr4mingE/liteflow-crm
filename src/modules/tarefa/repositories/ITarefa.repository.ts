@@ -17,5 +17,7 @@ export interface ITarefaRepository {
   buscarPorClienteId(clienteId: string): Promise<Tarefa[]>;
   buscarPorNegociacaoId(negociacaoId: string): Promise<Tarefa[]>;
   buscarPorDataVencimento(dataInicial: Date, dataFinal: Date): Promise<Tarefa[]>;
-
+  
+  // NOVO: Listagem geral para o Front-end
+  listarPorUsuarioId(usuarioId: string): Promise<Tarefa[]>;
 }
