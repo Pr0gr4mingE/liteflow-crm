@@ -5,6 +5,7 @@ import { IUsuarioRepository } from "./IUsuario.repository";
 import { CriarUsuarioDTO } from "../dto/criar-usuario.dto";
 import { Usuario } from "@/shared/types/domain/agentes/IUsuario";
 import { CargoUsuario } from "@/shared/utils/types/cargo-usuario.type";
+import { AtualizarUsuarioDTO } from "../dto/atualizar-usuario.dto";
 
 export class UsuarioRepository implements IUsuarioRepository {
   async salvar(dados: CriarUsuarioDTO): Promise<Usuario> {
@@ -14,6 +15,20 @@ export class UsuarioRepository implements IUsuarioRepository {
       .returning();
 
     return novoUsuario as Usuario;
+  }
+
+  // Coloque este método logo abaixo do salvar()
+  async atualizar(id: string, dados: AtualizarUsuarioDTO): Promise<Usuario> {
+    const [usuarioAtualizado] = await db
+      .update(usuariosTable)
+      .set({
+        ...dados,
+        dataAtualizacao: new Date(), // Caso você tenha esse campo de log no schema
+      })
+      .where(eq(usuariosTable.id, id))
+      .returning();
+
+    return usuarioAtualizado as Usuario;
   }
 
   // ... restante dos métodos de busca (inalterados)
