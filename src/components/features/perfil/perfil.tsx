@@ -1,9 +1,11 @@
 "use client";
 
-import { User, Mail, FileText, Briefcase } from "lucide-react";
+import { useState } from "react";
+import { User, Mail, FileText, Briefcase, Check, X, Edit2 } from "lucide-react";
 import { usePerfil } from "@/hooks/usuario/use-perfil.hook";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { AtualizarUsuarioDTO } from "@/modules/usuario/dto/atualizar-usuario.dto";
 
 function SkeletonPerfil() {
   return (
@@ -20,7 +22,10 @@ function SkeletonPerfil() {
 }
 
 export function PerfilFeature() {
-  const { usuario, carregando, erro } = usePerfil();
+  const { usuario, carregando, salvando, erro, mensagemSucesso, atualizarPerfil } = usePerfil();
+  
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState<AtualizarUsuarioDTO>({});
 
   if (carregando) {
     return (
@@ -30,7 +35,7 @@ export function PerfilFeature() {
     );
   }
 
-  if (erro || !usuario) {
+  if (!usuario) {
     return (
       <div className="flex min-h-[300px] flex-col items-center justify-center rounded-xl border border-red-200 bg-red-50 p-6">
         <p className="text-red-600 font-medium">{erro || "Usuário não encontrado."}</p>
@@ -38,22 +43,76 @@ export function PerfilFeature() {
     );
   }
 
+  const handleEdit = () => {
+    // Preenche o formulário com os dados atuais ao entrar no modo edição
+    setFormData({
+      nome: usuario.nome,
+      email: usuario.email,
+      cpf: usuario.cpf,
+    });
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setIsEditing(false);
+    setFormData({});
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    // Filtra apenas o que realmente mudou para enviar à API (afinal, o PATCH é parcial)
+    const mudancas: AtualizarUsuarioDTO = {};
+    if (formData.nome !== usuario.nome) mudancas.nome = formData.nome;
+    if (formData.email !== usuario.email) mudancas.email = formData.email;
+    if (formData.cpf !== usuario.cpf) mudancas.cpf = formData.cpf;
+
+    // Se não houver mudanças, só fecha a edição
+    if (Object.keys(mudancas).length === 0) {
+      setIsEditing(false);
+      return;
+    }
+
+    const sucesso = await atualizarPerfil(mudancas);
+    if (sucesso) {
+      setIsEditing(false);
+    }
+  };
+
   return (
     <div className="flex h-full flex-col max-w-4xl">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Meu Perfil</h1>
         <p className="text-sm text-slate-500">
-          Visualize e gerencie suas informações pessoais.
+          Visualize e atualize suas informações pessoais.
         </p>
       </div>
 
+      {mensagemSucesso && !isEditing && (
+        <div className="mb-4 rounded-md bg-green-50 p-4 border border-green-200">
+          <p className="text-sm font-medium text-green-800">{mensagemSucesso}</p>
+        </div>
+      )}
+
+      {erro && (
+        <div className="mb-4 rounded-md bg-red-50 p-4 border border-red-200">
+          <p className="text-sm font-medium text-red-800">{erro}</p>
+        </div>
+      )}
+
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-200 p-6">
+        <div className="border-b border-slate-200 p-6 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-slate-800">Dados Pessoais</h2>
+          {!isEditing && (
+            <Button onClick={handleEdit} variant="outline" size="sm" className="gap-2">
+              <Edit2 className="h-4 w-4" />
+              Editar
+            </Button>
+          )}
         </div>
         
         <div className="p-6">
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid gap-6 md:grid-cols-2">
               
               {/* Nome */}
@@ -63,9 +122,10 @@ export function PerfilFeature() {
                   Nome Completo
                 </label>
                 <Input 
-                  value={usuario.nome} 
-                  readOnly 
-                  className="bg-slate-50 text-slate-600 focus-visible:ring-0"
+                  value={isEditing ? formData.nome : usuario.nome}
+                  onChange={(e) => setFormData({ ...formData, nome: e.target.value })}
+                  readOnly={!isEditing}
+                  className={!isEditing ? "bg-slate-50 text-slate-600 focus-visible:ring-0 border-transparent shadow-none" : ""}
                 />
               </div>
 
@@ -76,9 +136,10 @@ export function PerfilFeature() {
                   E-mail
                 </label>
                 <Input 
-                  value={usuario.email} 
-                  readOnly 
-                  className="bg-slate-50 text-slate-600 focus-visible:ring-0"
+                  value={isEditing ? formData.email : usuario.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  readOnly={!isEditing}
+                  className={!isEditing ? "bg-slate-50 text-slate-600 focus-visible:ring-0 border-transparent shadow-none" : ""}
                 />
               </div>
 
@@ -89,13 +150,14 @@ export function PerfilFeature() {
                   CPF
                 </label>
                 <Input 
-                  value={usuario.cpf} 
-                  readOnly 
-                  className="bg-slate-50 text-slate-600 focus-visible:ring-0"
+                  value={isEditing ? formData.cpf : usuario.cpf}
+                  onChange={(e) => setFormData({ ...formData, cpf: e.target.value })}
+                  readOnly={!isEditing}
+                  className={!isEditing ? "bg-slate-50 text-slate-600 focus-visible:ring-0 border-transparent shadow-none" : ""}
                 />
               </div>
 
-              {/* Cargo */}
+              {/* Cargo (Sempre travado) */}
               <div className="space-y-2">
                 <label className="text-sm font-medium text-slate-700 flex items-center gap-2">
                   <Briefcase className="h-4 w-4 text-slate-400" />
@@ -104,17 +166,39 @@ export function PerfilFeature() {
                 <Input 
                   value={usuario.cargo.replace(/_/g, " ")} 
                   readOnly 
-                  className="bg-slate-50 text-slate-600 capitalize focus-visible:ring-0"
+                  className="bg-slate-50 text-slate-600 capitalize focus-visible:ring-0 border-transparent shadow-none cursor-not-allowed"
                 />
               </div>
 
             </div>
 
-            <div className="flex justify-end pt-4 border-t border-slate-100">
-              <Button type="button" disabled>
-                Editar Perfil
-              </Button>
-            </div>
+            {/* Ações do Formulário (Só aparece no modo edição) */}
+            {isEditing && (
+              <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
+                <Button 
+                  type="button" 
+                  variant="outline" 
+                  onClick={handleCancel}
+                  disabled={salvando}
+                  className="gap-2"
+                >
+                  <X className="h-4 w-4" />
+                  Cancelar
+                </Button>
+                <Button 
+                  type="submit" 
+                  disabled={salvando}
+                  className="gap-2"
+                >
+                  {salvando ? "Salvando..." : (
+                    <>
+                      <Check className="h-4 w-4" />
+                      Salvar Alterações
+                    </>
+                  )}
+                </Button>
+              </div>
+            )}
           </form>
         </div>
       </div>
