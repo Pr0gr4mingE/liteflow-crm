@@ -11,7 +11,7 @@ export class ObterBalancoGeralUseCase {
     const kpisBrutos = await this.dashboardRepository.obterKpis(dados.usuarioId, dados.tipo);
     const funilBruto = await this.dashboardRepository.obterAgrupamentoPorFase(dados.usuarioId, dados.tipo);
     const negociacoesProximas = await this.dashboardRepository.obterNegociacoesProximasAoFechamento(dados.usuarioId, dados.tipo, 5); 
-    const tarefasBrutas = await this.dashboardRepository.obterTarefasPendentes(dados.usuarioId, 5);
+    const tarefasBrutas = await this.dashboardRepository.obterTarefasPendentes(dados.usuarioId, dados.tipo, 5);
 
     return {
       kpis: {
