@@ -2,5 +2,5 @@ export interface KpiBruto {
   receitaTotal: number;
   ticketMedio: number;
   taxaConversao: number;
-  negociacoes: Array<{ valor: number; dataPrevisaoFechamento: Date | string }>;
+  previsaoMes: number; // <-- Alterado: sai o array, entra o valor já calculado no banco
 }
