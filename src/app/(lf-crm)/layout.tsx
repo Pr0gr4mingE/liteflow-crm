@@ -21,7 +21,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <Sidebar menuAberto={menuAberto} aoFechar={fecharMenu} />
       
       <div className="flex-1 flex flex-col w-full h-full min-w-0">
-        <Header aoClicarMenu={alternarMenu} />
+        {/* Passando o nomeUsuario aqui para o hook de iniciais funcionar */}
+        <Header aoClicarMenu={alternarMenu} nomeUsuario="Pedro" />
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6">
           {children}
         </main>
