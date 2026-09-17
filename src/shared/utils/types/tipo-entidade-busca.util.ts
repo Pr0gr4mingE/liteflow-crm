@@ -1,0 +1,1 @@
+export type TipoEntidadeBusca = "CLIENTE" | "NEGOCIACAO" | "TAREFA" | "USUARIO";
