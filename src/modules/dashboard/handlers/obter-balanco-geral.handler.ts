@@ -1,15 +1,14 @@
-// src/application/dashboard/handlers/obter-balanco-geral.handler.ts
 import { ObterBalancoGeralUseCase } from "../use-cases/obter-balanco-geral.use-case";
 import { ObterBalancoGeralDTO } from "../dto/obter-balanco-geral.dto";
-import { BalancoGeralResponse } from "@/shared/types/ui/dashboard/balanco-geral-response.type";
+import { RespostaBalancoGeralDTO } from "../dto/resposta-balanco-geral.dto";
 
 export class ObterBalancoGeralHandler {
   constructor(private readonly obterBalancoGeralUseCase: ObterBalancoGeralUseCase) {}
 
-  async handle(usuarioId: string, tipo: string = "TODOS"): Promise<BalancoGeralResponse> {
+  async handle(usuarioId: string, tipo: string = "TODOS"): Promise<RespostaBalancoGeralDTO> {
     try {
       if (!usuarioId) {
-        throw new Error("ID do usuário não fornecido.");
+        return { sucesso: false, mensagem: "ID do usuário não fornecido." };
       }
 
       // Garante que o tipo seja estritamente o esperado pelo DTO
@@ -22,11 +21,20 @@ export class ObterBalancoGeralHandler {
         tipo: tipoMapeado,
       };
 
-      return await this.obterBalancoGeralUseCase.execute(dto);
+      const dados = await this.obterBalancoGeralUseCase.execute(dto);
+      
+      return { 
+        sucesso: true, 
+        mensagem: "Dashboard carregado com sucesso.",
+        dados 
+      };
       
     } catch (error: unknown) {
       console.error("[ObterBalancoGeralHandler] Erro na orquestração:", error);
-      throw new Error("Erro na orquestração dos dados do dashboard.");
+      return { 
+        sucesso: false, 
+        mensagem: "Erro interno ao orquestrar os dados do dashboard." 
+      };
     }
   }
 }
