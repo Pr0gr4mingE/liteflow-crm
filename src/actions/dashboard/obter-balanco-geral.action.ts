@@ -3,7 +3,7 @@
 
 import { cookies } from "next/headers";
 import { BalancoGeralResponse } from "@/shared/types/ui/dashboard/balanco-geral-response.type";
-import { rehidratarData } from "@/shared/utils/formatacao/rehidratar-data.util"; // Ajuste para o caminho real do seu utilitário
+import { rehidratarData } from "@/shared/utils/formatacao/rehidratar-data.util";
 import { TarefaBruta } from "@/shared/types/ui/dashboard/dados-brutos/tarefa-bruta";
 import { NegociacaoBruta } from "@/shared/types/ui/dashboard/dados-brutos/negociacao-bruta";
 
@@ -31,7 +31,7 @@ export async function obterBalancoGeralAction(tipoFunil: "TODOS" | "PF" | "PJ" =
     const resposta = await fetch(url.toString(), {
       method: "GET",
       headers: { "Content-Type": "application/json" },
-      next: { revalidate: 60 } 
+      cache: "no-store"
     });
 
     if (!resposta.ok) {
@@ -39,7 +39,13 @@ export async function obterBalancoGeralAction(tipoFunil: "TODOS" | "PF" | "PJ" =
     }
 
     const payload = await resposta.json();
-    const dadosCrus = payload.dados || payload;
+
+    // INTERCEPTADOR: Se a API falhou (caiu no catch do Handler), aborta antes de tentar hidratar
+    if (!payload.sucesso || !payload.dados) {
+      return { sucesso: false, mensagem: payload.mensagem || "Erro ao buscar dados." };
+    }
+
+    const dadosCrus = payload.dados;
 
     // Hidratação: Intercepta as strings ISO que vieram do JSON e reconverte para objetos Date blindados
     const dadosHidratados: BalancoGeralResponse = {
@@ -55,7 +61,7 @@ export async function obterBalancoGeralAction(tipoFunil: "TODOS" | "PF" | "PJ" =
     };
     
     return { 
-      sucesso: payload.sucesso ?? true, 
+      sucesso: true, 
       dados: dadosHidratados,
       mensagem: payload.mensagem
     };
