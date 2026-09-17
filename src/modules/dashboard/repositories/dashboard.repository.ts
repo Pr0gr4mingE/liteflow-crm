@@ -1,4 +1,4 @@
-import { eq, ne, and, asc, isNotNull, gte } from "drizzle-orm"; 
+import { eq, ne, and, asc, isNotNull, gte, inArray, sql } from "drizzle-orm"; 
 import { db } from "@/infrastructure/database/db";
 import { tarefasTable } from "@/infrastructure/database/schemas/tarefa.schema";
 import { negociacoesPfTable } from "@/infrastructure/database/schemas/negociacao-pf.schema";
@@ -11,19 +11,32 @@ import { TarefaBruta } from "@/shared/types/ui/dashboard/dados-brutos/tarefa-bru
 
 export class DashboardRepository implements IDashboardRepository {
   
-  async obterTarefasPendentes(usuarioId: string, limite: number): Promise<TarefaBruta[]> {
+  async obterTarefasPendentes(usuarioId: string, tipo: string, limite: number): Promise<TarefaBruta[]> {
+    const baseWhere = and(
+      eq(tarefasTable.usuarioResponsavelId, usuarioId),
+      ne(tarefasTable.status, "CONCLUIDA")
+    );
+
+    let filtroTipo = undefined;
+
+    // Se for PF, traz apenas tarefas vinculadas a negociacoes PF
+    if (tipo === "PF") {
+      const subqueryPf = db.select({ id: negociacoesPfTable.id }).from(negociacoesPfTable);
+      filtroTipo = inArray(tarefasTable.negociacaoId, subqueryPf);
+    } 
+    // Se for PJ, traz apenas tarefas vinculadas a negociacoes PJ
+    else if (tipo === "PJ") {
+      const subqueryPj = db.select({ id: negociacoesPjTable.id }).from(negociacoesPjTable);
+      filtroTipo = inArray(tarefasTable.negociacaoId, subqueryPj);
+    }
+
     const tarefas = await db.select({
         id: tarefasTable.id,
         titulo: tarefasTable.titulo,
         dataVencimento: tarefasTable.dataVencimento,
       })
       .from(tarefasTable)
-      .where(
-        and(
-          eq(tarefasTable.usuarioResponsavelId, usuarioId),
-          ne(tarefasTable.status, "CONCLUIDA")
-        )
-      )
+      .where(filtroTipo ? and(baseWhere, filtroTipo) : baseWhere)
       .orderBy(asc(tarefasTable.dataVencimento))
       .limit(limite);
 
@@ -36,7 +49,6 @@ export class DashboardRepository implements IDashboardRepository {
     
     const dataAtual = new Date(); 
 
-    // Promessas inicializadas vazias para evitar o ternário gigante
     let pfPromise: Promise<NegociacaoBruta[]> = Promise.resolve([]);
     let pjPromise: Promise<NegociacaoBruta[]> = Promise.resolve([]);
 
@@ -91,14 +103,61 @@ export class DashboardRepository implements IDashboardRepository {
     return negociacoes.slice(0, limite);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async obterKpis(_usuarioId: string, _tipo: string): Promise<KpiBruto> {
+  async obterKpis(usuarioId: string, tipo: string): Promise<KpiBruto> {
+    const buscarPf = tipo === "TODOS" || tipo === "PF";
+    const buscarPj = tipo === "TODOS" || tipo === "PJ";
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const gerarAgregados = async (tabela: any, tipoCliente: "PF" | "PJ") => {
+      
+      // AQUI ESTÁ A CORREÇÃO: Puxamos a coluna .fase em vez de .status
+      // Se no seu arquivo de schema (ex: negociacao-pf.schema.ts) o nome exportado for status, mude para tabela.status
+      const colunaFase = tabela.fase; 
+
+      const condicaoGanho = tipoCliente === "PF" 
+        ? sql`${colunaFase} IN ('CONVERSAO', 'FIDELIZACAO')` 
+        : sql`${colunaFase} = 'FECHADO'`;
+
+      const condicaoPerdido = tipoCliente === "PF" 
+        ? sql`${colunaFase} = 'DESISTENCIA'` 
+        : sql`${colunaFase} = 'INDEFERIDO'`;
+
+      const condicaoAberto = tipoCliente === "PF"
+        ? sql`${colunaFase} NOT IN ('CONVERSAO', 'FIDELIZACAO', 'DESISTENCIA')`
+        : sql`${colunaFase} NOT IN ('FECHADO', 'INDEFERIDO')`;
+
+      const resultado = await db.select({
+        receita: sql<number>`COALESCE(SUM(CASE WHEN ${condicaoGanho} THEN ${tabela.valor} ELSE 0 END), 0)`,
+        qtdGanhos: sql<number>`CAST(SUM(CASE WHEN ${condicaoGanho} THEN 1 ELSE 0 END) AS INTEGER)`,
+        qtdPerdidos: sql<number>`CAST(SUM(CASE WHEN ${condicaoPerdido} THEN 1 ELSE 0 END) AS INTEGER)`,
+        previsaoMes: sql<number>`COALESCE(SUM(CASE WHEN ${condicaoAberto} AND date_trunc('month', ${tabela.dataPrevisaoFechamento}) = date_trunc('month', CURRENT_DATE) THEN ${tabela.valor} ELSE 0 END), 0)`
+      })
+      .from(tabela)
+      .where(eq(tabela.usuarioResponsavelId, usuarioId));
+
+      return resultado[0];
+    };
+
+    const [aggPf, aggPj] = await Promise.all([
+      buscarPf ? gerarAgregados(negociacoesPfTable, "PF") : Promise.resolve({ receita: 0, qtdGanhos: 0, qtdPerdidos: 0, previsaoMes: 0 }),
+      buscarPj ? gerarAgregados(negociacoesPjTable, "PJ") : Promise.resolve({ receita: 0, qtdGanhos: 0, qtdPerdidos: 0, previsaoMes: 0 })
+    ]);
+
+    const receitaTotal = Number(aggPf.receita) + Number(aggPj.receita);
+    const qtdGanhos = Number(aggPf.qtdGanhos) + Number(aggPj.qtdGanhos);
+    const qtdPerdidos = Number(aggPf.qtdPerdidos) + Number(aggPj.qtdPerdidos);
+    const previsaoMes = Number(aggPf.previsaoMes) + Number(aggPj.previsaoMes);
+
+    const ticketMedio = qtdGanhos > 0 ? receitaTotal / qtdGanhos : 0;
+    const totalFinalizados = qtdGanhos + qtdPerdidos;
+    const taxaConversao = totalFinalizados > 0 ? (qtdGanhos / totalFinalizados) * 100 : 0;
+
     return {
-      receitaTotal: 150000,
-      ticketMedio: 15000,
-      taxaConversao: 65,
-      previsaoMes: 45000 
-    } as KpiBruto;
+      receitaTotal,
+      ticketMedio,
+      taxaConversao,
+      previsaoMes
+    };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

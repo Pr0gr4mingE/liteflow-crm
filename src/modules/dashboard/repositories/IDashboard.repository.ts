@@ -8,5 +8,5 @@ export interface IDashboardRepository {
   obterKpis(usuarioId: string, tipo: string): Promise<KpiBruto>;
   obterAgrupamentoPorFase(usuarioId: string, tipo: string): Promise<FunilBrutoItem[]>;
   obterNegociacoesProximasAoFechamento(usuarioId: string, tipo: string, limite: number): Promise<NegociacaoBruta[]>;
-  obterTarefasPendentes(usuarioId: string, limite: number): Promise<TarefaBruta[]>;
+  obterTarefasPendentes(usuarioId: string, tipo: string, limite: number): Promise<TarefaBruta[]>;
 }
