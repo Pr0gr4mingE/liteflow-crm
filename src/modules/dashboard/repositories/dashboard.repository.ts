@@ -161,7 +161,38 @@ export class DashboardRepository implements IDashboardRepository {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async obterAgrupamentoPorFase(_usuarioId: string, _tipo: string): Promise<FunilBrutoItem[]> {
-    return [] as FunilBrutoItem[];
+  async obterAgrupamentoPorFase(usuarioId: string, tipo: string): Promise<FunilBrutoItem[]> {
+    const buscarPf = tipo === "TODOS" || tipo === "PF";
+    const buscarPj = tipo === "TODOS" || tipo === "PJ";
+
+    let pfPromise: Promise<FunilBrutoItem[]> = Promise.resolve([]);
+    let pjPromise: Promise<FunilBrutoItem[]> = Promise.resolve([]);
+
+    if (buscarPf) {
+      pfPromise = db.select({
+          fase: negociacoesPfTable.fase,
+          quantidade: sql<number>`CAST(COUNT(${negociacoesPfTable.id}) AS INTEGER)`,
+          valorTotal: sql<number>`COALESCE(SUM(${negociacoesPfTable.valor}), 0)`
+        })
+        .from(negociacoesPfTable)
+        .where(eq(negociacoesPfTable.usuarioResponsavelId, usuarioId))
+        .groupBy(negociacoesPfTable.fase)
+        .then(res => res as FunilBrutoItem[]);
+    }
+
+    if (buscarPj) {
+      pjPromise = db.select({
+          fase: negociacoesPjTable.fase,
+          quantidade: sql<number>`CAST(COUNT(${negociacoesPjTable.id}) AS INTEGER)`,
+          valorTotal: sql<number>`COALESCE(SUM(${negociacoesPjTable.valor}), 0)`
+        })
+        .from(negociacoesPjTable)
+        .where(eq(negociacoesPjTable.usuarioResponsavelId, usuarioId))
+        .groupBy(negociacoesPjTable.fase)
+        .then(res => res as FunilBrutoItem[]);
+    }
+
+    const [pf, pj] = await Promise.all([pfPromise, pjPromise]);
+    return [...pf, ...pj];
   }
 }
