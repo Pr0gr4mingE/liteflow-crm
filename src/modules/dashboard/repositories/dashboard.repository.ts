@@ -160,7 +160,6 @@ export class DashboardRepository implements IDashboardRepository {
     };
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async obterAgrupamentoPorFase(usuarioId: string, tipo: string): Promise<FunilBrutoItem[]> {
     const buscarPf = tipo === "TODOS" || tipo === "PF";
     const buscarPj = tipo === "TODOS" || tipo === "PJ";
