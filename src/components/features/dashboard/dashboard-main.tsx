@@ -5,6 +5,7 @@ import { DashboardHeader } from "./dashboard-header";
 import { DashboardKpis } from "./dashboard-kpis";
 import { DashboardTarefas } from "./dashboard-tarefas";
 import { DashboardNegociacoes } from "./dashboard-negociacoes";
+import { GraficoFunil } from "./dashboard-grafico-funil";
 
 export function DashboardMain() {
   const { 
@@ -42,9 +43,18 @@ export function DashboardMain() {
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Esquerda: Gráfico de Funil (Espaço Reservado) */}
-        <div className="bg-slate-100 rounded-xl p-6 border border-slate-200 shadow-sm min-h-[400px] flex items-center justify-center">
-          <span className="text-slate-400 font-medium">Gráfico de Funil (Em Breve)</span>
+        {/* Esquerda: Gráfico de Funil */}
+        <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm min-h-[400px] flex flex-col">
+          <h3 className="font-semibold text-slate-800 mb-2">Funil de Vendas</h3>
+          <p className="text-sm text-slate-500 mb-6">Valores totais agrupados por estágio.</p>
+          
+          <div className="flex-1 w-full flex items-center justify-center">
+            {carregando ? (
+              <span className="text-slate-400 text-sm">Carregando gráfico...</span>
+            ) : (
+              <GraficoFunil dados={dados?.funil || []} />
+            )}
+          </div>
         </div>
 
         {/* Direita: Listas Verticais */}
