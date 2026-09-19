@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { makeCriarNegociacaoPjHandler } from "@/modules/negociacao-pj/factories/criar-negociacao-pj.factory";
 import { makeListarNegociacoesPjHandler } from "@/modules/negociacao-pj/factories/listar-negociacao-pj.factory";
+import { makeAtualizarNegociacaoPjHandler } from "@/modules/negociacao-pj/factories/atualizar-negociacao-pj.factory";
 
 export async function POST(req: NextRequest) {
   try {
@@ -40,4 +41,14 @@ export async function GET(req: NextRequest) {
     console.error("[API Negociacao PF GET] Erro não tratado:", error);
     return NextResponse.json({ sucesso: false, mensagem: "Erro interno" }, { status: 500 });
   }
+}
+
+export async function PUT(request: NextRequest) {
+  const body = await request.json();
+  const { id, ...dados } = body;
+
+  const handler = makeAtualizarNegociacaoPjHandler();
+  const response = await handler.handle(id, dados);
+
+  return NextResponse.json(response, { status: response.sucesso ? 200 : 400 });
 }
