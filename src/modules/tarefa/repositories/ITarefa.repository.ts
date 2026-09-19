@@ -8,6 +8,9 @@ import { TipoTarefaB2c } from "@/shared/utils/types/tipo-tarefa-b2c.type";
 export interface ITarefaRepository {
   salvar(dados: CriarTarefaDTO): Promise<Tarefa>;
   
+  // Atualizações
+  atualizar(id: string, dados: Partial<CriarTarefaDTO>): Promise<void>;
+
   // Buscas Únicas
   buscarPorId(id: string): Promise<Tarefa | null>;
   

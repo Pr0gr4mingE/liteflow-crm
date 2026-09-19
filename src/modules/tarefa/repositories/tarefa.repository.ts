@@ -24,6 +24,13 @@ export class TarefaRepository implements ITarefaRepository {
     return novaTarefa as Tarefa;
   }
 
+  async atualizar(id: string, dados: Partial<CriarTarefaDTO>): Promise<void> {
+    await db
+      .update(tarefasTable)
+      .set(dados)
+      .where(eq(tarefasTable.id, id));
+  }
+
   async buscarPorId(id: string): Promise<Tarefa | null> {
     const [tarefa] = await db.select().from(tarefasTable).where(eq(tarefasTable.id, id));
     return (tarefa as Tarefa) || null;
