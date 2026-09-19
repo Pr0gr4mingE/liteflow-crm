@@ -11,9 +11,16 @@ export class NegociacaoPfRepository implements INegociacaoPfRepository {
   async salvar(dados: CriarNegociacaoPfDTO): Promise<NegociacaoPf> {
     const [novaNegociacao] = await db
       .insert(negociacoesPfTable)
-      .values(dados as typeof negociacoesPfTable.$inferInsert) // <-- Correção aplicada
+      .values(dados as typeof negociacoesPfTable.$inferInsert)
       .returning();
     return novaNegociacao as NegociacaoPf;
+  }
+
+  async atualizarFase(id: string, novaFase: FaseNegociacaoPf): Promise<void> {
+    await db
+      .update(negociacoesPfTable)
+      .set({ fase: novaFase })
+      .where(eq(negociacoesPfTable.id, id));
   }
 
   // ... (buscas inalteradas)

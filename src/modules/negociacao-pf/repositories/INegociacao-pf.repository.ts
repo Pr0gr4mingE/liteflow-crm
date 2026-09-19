@@ -5,6 +5,9 @@ import { FaseNegociacaoPf } from "@/shared/utils/types/fase-negociacao-pf.type";
 export interface INegociacaoPfRepository {
   salvar(dados: CriarNegociacaoPfDTO): Promise<NegociacaoPf>;
   
+  // Atualizações
+  atualizarFase(id: string, novaFase: FaseNegociacaoPf): Promise<void>;
+
   // Buscas Únicas
   buscarPorId(id: string): Promise<NegociacaoPf | null>;
   
