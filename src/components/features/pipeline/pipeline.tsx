@@ -1,11 +1,12 @@
 "use client";
 
+"use client";
+
 import { useState, useMemo } from "react";
 import { KanbanBoard as KanbanBoardUI } from "@/components/ui/kanban/kanban-board";
 import { useKanban } from "@/hooks/kanban/use-kanban.hook";
 import { usePipeline } from "@/hooks/pipeline/use-pipeline.hook";
 import { DetalhesNegociacaoModal } from "@/components/features/modal/modal-detalhes-negociacao";
-// 1. Import do novo Modal Wrapper
 import { CadastroTarefaFeature } from "@/components/features/ativos/cad-tarefas/cad-tarefa";
 
 export function PipelineFeature() {
@@ -16,14 +17,14 @@ export function PipelineFeature() {
     carregandoPipeline, 
     erro, 
     refetch,
-    negociacoes
+    negociacoes,
+    moverCard // <-- 1. Extraído do hook
   } = usePipeline();
   
-  const { colunas, handleDragEnd } = useKanban(colunasDaPipeline);
+  // 2. Passado como callback para o hook do Kanban
+  const { colunas, handleDragEnd } = useKanban(colunasDaPipeline, moverCard);
 
   const [idSelecionado, setIdSelecionado] = useState<string | null>(null);
-  
-  // 2. Estado local para controlar o modal de tarefas
   const [modalTarefaAberto, setModalTarefaAberto] = useState(false);
   const [contextoTarefa, setContextoTarefa] = useState<{ id: string; tipo: "PF" | "PJ" } | null>(null);
 
