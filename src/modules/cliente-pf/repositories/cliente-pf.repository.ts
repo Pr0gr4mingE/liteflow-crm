@@ -19,6 +19,13 @@ export class ClientePfRepository implements IClientePfRepository {
     return novoCliente as ClientePf;
   }
 
+  async atualizar(id: string, dados: Partial<CriarClientePfDTO>): Promise<void> {
+    await db
+      .update(clientesPfTable)
+      .set(dados)
+      .where(eq(clientesPfTable.id, id));
+  }
+
   // ... (buscas inalteradas)
   async buscarPorId(id: string): Promise<ClientePf | null> {
     const [cliente] = await db.select().from(clientesPfTable).where(eq(clientesPfTable.id, id));

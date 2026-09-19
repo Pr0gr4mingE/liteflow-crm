@@ -4,6 +4,9 @@ import { ClientePf } from "@/shared/types/domain/ativos/clientes/ICliente-pf";
 export interface IClientePfRepository {
   salvar(dados: CriarClientePfDTO): Promise<ClientePf>;
   
+  // Atualizações
+  atualizar(id: string, dados: Partial<CriarClientePfDTO>): Promise<void>;
+
   // Buscas Únicas
   buscarPorId(id: string): Promise<ClientePf | null>;
   buscarPorCpf(cpf: string): Promise<ClientePf | null>;

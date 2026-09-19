@@ -23,6 +23,13 @@ export class ClientePjRepository implements IClientePjRepository {
     return novoCliente as ClientePj;
   }
 
+  async atualizar(id: string, dados: Partial<CriarClientePjDTO>): Promise<void> {
+    await db
+      .update(clientesPjTable)
+      .set(dados)
+      .where(eq(clientesPjTable.id, id));
+  }
+
   // ... (buscas inalteradas)
   async buscarPorId(id: string): Promise<ClientePj | null> {
     const [cliente] = await db.select().from(clientesPjTable).where(eq(clientesPjTable.id, id));
