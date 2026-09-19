@@ -16,6 +16,13 @@ export class NegociacaoPjRepository implements INegociacaoPjRepository {
     return novaNegociacao as NegociacaoPj;
   }
 
+  async atualizar(id: string, dados: Partial<CriarNegociacaoPjDTO>): Promise<void> {
+    await db
+      .update(negociacoesPjTable)
+      .set(dados)
+      .where(eq(negociacoesPjTable.id, id));
+  }
+
   async atualizarFase(id: string, novaFase: FaseNegociacaoPj): Promise<void> {
     await db
       .update(negociacoesPjTable)

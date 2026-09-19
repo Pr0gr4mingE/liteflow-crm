@@ -7,7 +7,8 @@ export interface INegociacaoPjRepository {
 
   // Atualizações
   atualizarFase(id: string, novaFase: FaseNegociacaoPj): Promise<void>;
-  
+  atualizar(id: string, dados: Partial<CriarNegociacaoPjDTO>): Promise<void>;  
+
   // Buscas Únicas
   buscarPorId(id: string): Promise<NegociacaoPj | null>;
   

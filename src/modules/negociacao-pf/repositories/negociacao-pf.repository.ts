@@ -23,6 +23,13 @@ export class NegociacaoPfRepository implements INegociacaoPfRepository {
       .where(eq(negociacoesPfTable.id, id));
   }
 
+  async atualizar(id: string, dados: Partial<CriarNegociacaoPfDTO>): Promise<void> {
+    await db
+      .update(negociacoesPfTable)
+      .set(dados)
+      .where(eq(negociacoesPfTable.id, id));
+  }
+
   // ... (buscas inalteradas)
   async buscarPorId(id: string): Promise<NegociacaoPf | null> {
     const [negociacao] = await db.select().from(negociacoesPfTable).where(eq(negociacoesPfTable.id, id));
