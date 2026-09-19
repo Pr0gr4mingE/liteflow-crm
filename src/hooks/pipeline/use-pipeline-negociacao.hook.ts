@@ -28,8 +28,6 @@ export function usePipelineNegociacoes() {
       listarNegociacoesPjAction()
     ]);
 
-    // Mapeamento explícito garante que apenas os dados necessários do Pipeline vão para o estado,
-    // e o TypeScript reconhece a conversão correta de Date para string.
     const formatadoPf: NegociacaoPipeline[] = dadosPf.map((n: NegociacaoPfListagem) => ({
       id: n.id,
       titulo: n.titulo,

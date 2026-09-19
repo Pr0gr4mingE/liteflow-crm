@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { usePipelineNegociacoes } from "./use-pipeline-negociacao.hook";
 import { KanbanColumnProps } from "@/shared/types/ui/kanban/kanban-column.props";
 import { KanbanCardProps } from "@/shared/types/ui/kanban/kanban-card.props";
 import { FASES_PF, FASES_PJ } from "@/shared/utils/constantes/pipeline-fases";
+import { atualizarFaseNegociacaoAction } from "@/actions/ativos/atualizar-ativos/negociacoes/atualizar-fase-negociacao.action";
 
 export type TipoFunil = "PF" | "PJ";
 
@@ -10,6 +11,16 @@ export function usePipeline() {
   const [tipoFunil, setTipoFunil] = useState<TipoFunil>("PF");
   
   const { negociacoes, isLoading, erro, refetch } = usePipelineNegociacoes();
+
+  const moverCard = useCallback(async (negociacaoId: string, novaFaseId: string) => {
+    const response = await atualizarFaseNegociacaoAction(negociacaoId, novaFaseId, tipoFunil);
+    
+    if (response.sucesso) {
+      await refetch(); 
+    } else {
+      console.error("[usePipeline] Erro ao mover card:", response.mensagem);
+    }
+  }, [tipoFunil, refetch]);
 
   const colunasDaPipeline = useMemo<KanbanColumnProps[]>(() => {
     const negociacoesDoFunil = negociacoes.filter(n => n.tipo === tipoFunil);
@@ -30,7 +41,7 @@ export function usePipeline() {
       return {
         id: fase.id,
         titulo: fase.titulo,
-        corDoCabecalho: fase.tailwindClass, // <-- Consumindo da nova constante
+        corDoCabecalho: fase.tailwindClass, 
         cards
       };
     });
@@ -43,6 +54,7 @@ export function usePipeline() {
     carregandoPipeline: isLoading,
     erro,
     refetch,
-    negociacoes
+    negociacoes,
+    moverCard 
   };
 }
