@@ -1,11 +1,14 @@
 import { useState } from "react";
-import { CheckCircle2, Clock, Calendar, User, Briefcase, Pencil } from "lucide-react";
+import { CheckCircle2, Clock, Calendar, User, Briefcase, Pencil, Trash2 } from "lucide-react"; // Adicionado Trash2
 import { TarefaListagem } from "@/shared/types/ui/listagem/tarefas/tarefa-listagem.type";
 import { FiltroStatusTarefa } from "@/hooks/listagem/tarefas/use-tarefas.hook";
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
 import { EstiloTituloTipoTarefa } from "@/shared/utils/formatacao/estilo-titulo-tipo-tarefa.util";
 
 import { EditarTarefaFeature } from "@/components/features/ativos/edit-tarefas/editar-tarefa";
+// Import da nova feature de exclusão
+import { DeletarTarefaFeature } from "@/components/features/ativos/deletar-tarefas/deletar-tarefa";
+
 import { Tarefa } from "@/shared/types/domain/ativos/tarefas/ITarefa";
 
 import { useFeedback } from "@/shared/hooks/ui/use-feedback.hook";
@@ -35,10 +38,12 @@ function SkeletonLista() {
 
 function CardTarefa({ 
   tarefa, 
-  onEdit 
+  onEdit,
+  onDelete // Nova prop
 }: { 
   tarefa: TarefaListagem;
   onEdit: () => void;
+  onDelete: () => void;
 }) {
   const { label, classes } = EstiloTituloTipoTarefa(tarefa.tipo);
 
@@ -88,14 +93,22 @@ function CardTarefa({
           )}
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          <span className="text-xs text-slate-400">Criada em {formatarDataPtBr(tarefa.dataCriacao)}</span>
+        <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+          <span className="hidden sm:inline text-xs text-slate-400">Criada em {formatarDataPtBr(tarefa.dataCriacao)}</span>
           <button 
             onClick={onEdit}
             className="rounded-md p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
             title="Editar Tarefa"
           >
             <Pencil className="h-4 w-4" />
+          </button>
+          {/* Novo Botão de Excluir */}
+          <button 
+            onClick={onDelete}
+            className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+            title="Excluir Tarefa"
+          >
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -105,11 +118,22 @@ function CardTarefa({
 
 export function TarefasLista({ filtroStatus, tarefas, carregando, busca, onAtualizar }: TarefasListaProps) {
   const [tarefaEditando, setTarefaEditando] = useState<TarefaListagem | null>(null);
+  
+  // Novo estado para exclusão (apenas o ID)
+  const [tarefaDeletandoId, setTarefaDeletandoId] = useState<string | null>(null);
+  
   const { mensagem, mostrarSucesso } = useFeedback();
 
   function handleSucesso() {
     setTarefaEditando(null);
-    mostrarSucesso("Tarefa");
+    mostrarSucesso("Tarefa atualizada");
+    onAtualizar();
+  }
+
+  // Handler de sucesso para exclusão
+  function handleSucessoDeletar() {
+    setTarefaDeletandoId(null);
+    mostrarSucesso("Tarefa excluída");
     onAtualizar();
   }
 
@@ -144,6 +168,7 @@ export function TarefasLista({ filtroStatus, tarefas, carregando, busca, onAtual
               key={tarefa.id} 
               tarefa={tarefa} 
               onEdit={() => setTarefaEditando(tarefa)}
+              onDelete={() => setTarefaDeletandoId(tarefa.id)} // Nova prop acoplada
             />
           ))}
         </ul>
@@ -154,6 +179,14 @@ export function TarefasLista({ filtroStatus, tarefas, carregando, busca, onAtual
         onClose={() => setTarefaEditando(null)}
         onSuccess={handleSucesso}
         tarefaSelecionada={tarefaEditando as Tarefa}
+      />
+
+      {/* Nova Feature de Deleção */}
+      <DeletarTarefaFeature
+        isOpen={!!tarefaDeletandoId}
+        onClose={() => setTarefaDeletandoId(null)}
+        onSuccess={handleSucessoDeletar}
+        tarefaId={tarefaDeletandoId}
       />
 
       <ToastFeedback mensagem={mensagem} />

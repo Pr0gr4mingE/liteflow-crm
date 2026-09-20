@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Mail, Phone, Building2, User, Pencil } from "lucide-react";
+import { Mail, Phone, Building2, User, Pencil, Trash2 } from "lucide-react"; // Adicionado Trash2
 import { ClientePf } from "@/shared/types/domain/ativos/clientes/ICliente-pf";
 import { ClientePj } from "@/shared/types/domain/ativos/clientes/ICliente-pj";
 import { TipoCliente } from "@/hooks/listagem/clientes/use-clientes.hook";
@@ -10,6 +10,9 @@ import { formatarTelefone } from "@/shared/utils/formatacao/formatar-telefone.ut
 
 import { EditarClientePfFeature } from "@/components/features/ativos/edit-clientes/editar-cliente-pf";
 import { EditarClientePjFeature } from "@/components/features/ativos/edit-clientes/editar-cliente-pj";
+// Imports das novas features de exclusão
+import { DeletarClientePfFeature } from "@/components/features/ativos/deletar-clientes/deletar-cliente-pf";
+import { DeletarClientePjFeature } from "@/components/features/ativos/deletar-clientes/deletar-cliente-pj";
 
 import { useFeedback } from "@/shared/hooks/ui/use-feedback.hook";
 import { ToastFeedback } from "@/components/ui/feedback/toast-feedback";
@@ -39,17 +42,35 @@ function SkeletonLista() {
 export function ClientesLista({ tipoCliente, clientes, carregando, busca, onAtualizar }: ClientesListaProps) {
   const [clientePfEditando, setClientePfEditando] = useState<ClientePf | null>(null);
   const [clientePjEditando, setClientePjEditando] = useState<ClientePj | null>(null);
+  
+  // Novos estados para exclusão (apenas o ID)
+  const [clientePfDeletandoId, setClientePfDeletandoId] = useState<string | null>(null);
+  const [clientePjDeletandoId, setClientePjDeletandoId] = useState<string | null>(null);
+  
   const { mensagem, mostrarSucesso } = useFeedback();
 
   function handleSucessoPf() {
     setClientePfEditando(null);
-    mostrarSucesso("Cliente Pessoa Física");
+    mostrarSucesso("Cliente Pessoa Física atualizado");
     onAtualizar();
   }
 
   function handleSucessoPj() {
     setClientePjEditando(null);
-    mostrarSucesso("Empresa");
+    mostrarSucesso("Empresa atualizada");
+    onAtualizar();
+  }
+
+  // Handlers de sucesso para exclusão
+  function handleSucessoDeletarPf() {
+    setClientePfDeletandoId(null);
+    mostrarSucesso("Cliente Pessoa Física excluído");
+    onAtualizar();
+  }
+
+  function handleSucessoDeletarPj() {
+    setClientePjDeletandoId(null);
+    mostrarSucesso("Empresa excluída");
     onAtualizar();
   }
 
@@ -95,14 +116,22 @@ export function ClientesLista({ tipoCliente, clientes, carregando, busca, onAtua
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-xs text-slate-400">Desde {formatarDataPtBr(cliente.dataCriacao)}</span>
+                    <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+                      <span className="hidden sm:inline text-xs text-slate-400">Desde {formatarDataPtBr(cliente.dataCriacao)}</span>
                       <button 
                         onClick={() => setClientePfEditando(cliente)}
                         className="rounded-md p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                         title="Editar Cliente"
                       >
                         <Pencil className="h-4 w-4" />
+                      </button>
+                      {/* Novo Botão de Excluir */}
+                      <button 
+                        onClick={() => setClientePfDeletandoId(cliente.id)}
+                        className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                        title="Excluir Cliente"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
@@ -126,14 +155,22 @@ export function ClientesLista({ tipoCliente, clientes, carregando, busca, onAtua
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-xs text-slate-400">Desde {formatarDataPtBr(cliente.dataCriacao)}</span>
+                    <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+                      <span className="hidden sm:inline text-xs text-slate-400">Desde {formatarDataPtBr(cliente.dataCriacao)}</span>
                       <button 
                         onClick={() => setClientePjEditando(cliente)}
                         className="rounded-md p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
                         title="Editar Empresa"
                       >
                         <Pencil className="h-4 w-4" />
+                      </button>
+                      {/* Novo Botão de Excluir */}
+                      <button 
+                        onClick={() => setClientePjDeletandoId(cliente.id)}
+                        className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+                        title="Excluir Empresa"
+                      >
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
@@ -154,6 +191,21 @@ export function ClientesLista({ tipoCliente, clientes, carregando, busca, onAtua
         onClose={() => setClientePjEditando(null)}
         onSuccess={handleSucessoPj}
         clienteSelecionado={clientePjEditando as ClientePj}
+      />
+
+      {/* Novas Features de Deleção */}
+      <DeletarClientePfFeature
+        isOpen={!!clientePfDeletandoId}
+        onClose={() => setClientePfDeletandoId(null)}
+        onSuccess={handleSucessoDeletarPf}
+        clienteId={clientePfDeletandoId}
+      />
+
+      <DeletarClientePjFeature
+        isOpen={!!clientePjDeletandoId}
+        onClose={() => setClientePjDeletandoId(null)}
+        onSuccess={handleSucessoDeletarPj}
+        clienteId={clientePjDeletandoId}
       />
 
       <ToastFeedback mensagem={mensagem} />

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Briefcase, User, Calendar, Banknote, Pencil } from "lucide-react";
+import { Briefcase, User, Calendar, Banknote, Pencil, Trash2 } from "lucide-react"; // Adicionado Trash2
 import { NegociacaoPfListagem } from "@/shared/types/ui/listagem/negociacoes/negociacao-pf-listagem.type";
 import { TipoNegociacao } from "@/hooks/listagem/negociacoes/use-negociacoes.hook";
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
@@ -10,6 +10,10 @@ import { EstiloTituloFase } from "@/shared/utils/formatacao/estilo-titulo-fase-n
 
 import { EditarNegociacaoPfFeature } from "@/components/features/ativos/edit-negociacoes/editar-negociacao-pf";
 import { EditarNegociacaoPjFeature } from "@/components/features/ativos/edit-negociacoes/editar-negociacao-pj";
+// Imports das novas features de exclusão
+import { DeletarNegociacaoPfFeature } from "@/components/features/ativos/deletar-negociacoes/deletar-negociacao-pf";
+import { DeletarNegociacaoPjFeature } from "@/components/features/ativos/deletar-negociacoes/deletar-negociacao-pj";
+
 import { NegociacaoPf } from "@/shared/types/domain/ativos/negociacoes/INegociacao-pf";
 import { NegociacaoPj } from "@/shared/types/domain/ativos/negociacoes/INegociacao-pj";
 
@@ -42,10 +46,12 @@ function CardNegociacao({
   negociacao,
   tipoNegociacao,
   onEdit,
+  onDelete, // Nova prop recebida
 }: {
   negociacao: NegociacaoPfListagem | NegociacaoPjListagem;
   tipoNegociacao: TipoNegociacao;
   onEdit: () => void;
+  onDelete: () => void;
 }) {
   const clienteFallback = tipoNegociacao === "PF" ? "Cliente Desconhecido" : "Empresa Desconhecida";
 
@@ -85,14 +91,22 @@ function CardNegociacao({
           )}
         </div>
 
-        <div className="flex items-center gap-3 shrink-0">
-          <span className="text-xs text-slate-400">Desde {formatarDataPtBr(negociacao.dataCriacao)}</span>
+        <div className="flex items-center gap-1 sm:gap-3 shrink-0">
+          <span className="hidden sm:inline text-xs text-slate-400">Desde {formatarDataPtBr(negociacao.dataCriacao)}</span>
           <button 
             onClick={onEdit}
             className="rounded-md p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
             title="Editar Negociação"
           >
             <Pencil className="h-4 w-4" />
+          </button>
+          {/* Novo Botão de Excluir */}
+          <button 
+            onClick={onDelete}
+            className="rounded-md p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-600 transition-colors"
+            title="Excluir Negociação"
+          >
+            <Trash2 className="h-4 w-4" />
           </button>
         </div>
       </div>
@@ -103,17 +117,35 @@ function CardNegociacao({
 export function NegociacoesLista({ tipoNegociacao, negociacoes, carregando, busca, onAtualizar }: NegociacoesListaProps) {
   const [negociacaoPfEditando, setNegociacaoPfEditando] = useState<NegociacaoPfListagem | null>(null);
   const [negociacaoPjEditando, setNegociacaoPjEditando] = useState<NegociacaoPjListagem | null>(null);
+  
+  // Novos estados para exclusão (apenas o ID)
+  const [negociacaoPfDeletandoId, setNegociacaoPfDeletandoId] = useState<string | null>(null);
+  const [negociacaoPjDeletandoId, setNegociacaoPjDeletandoId] = useState<string | null>(null);
+  
   const { mensagem, mostrarSucesso } = useFeedback();
 
   function handleSucessoPf() {
     setNegociacaoPfEditando(null);
-    mostrarSucesso("Negociação");
+    mostrarSucesso("Negociação atualizada");
     onAtualizar();
   }
 
   function handleSucessoPj() {
     setNegociacaoPjEditando(null);
-    mostrarSucesso("Negociação corporativa");
+    mostrarSucesso("Negociação corporativa atualizada");
+    onAtualizar();
+  }
+
+  // Handlers de sucesso para exclusão
+  function handleSucessoDeletarPf() {
+    setNegociacaoPfDeletandoId(null);
+    mostrarSucesso("Negociação excluída");
+    onAtualizar();
+  }
+
+  function handleSucessoDeletarPj() {
+    setNegociacaoPjDeletandoId(null);
+    mostrarSucesso("Negociação corporativa excluída");
     onAtualizar();
   }
 
@@ -152,6 +184,10 @@ export function NegociacoesLista({ tipoNegociacao, negociacoes, carregando, busc
                 if (tipoNegociacao === "PF") setNegociacaoPfEditando(negociacao as NegociacaoPfListagem);
                 else setNegociacaoPjEditando(negociacao as NegociacaoPjListagem);
               }}
+              onDelete={() => { // Nova prop acoplada ao estado
+                if (tipoNegociacao === "PF") setNegociacaoPfDeletandoId(negociacao.id);
+                else setNegociacaoPjDeletandoId(negociacao.id);
+              }}
             />
           ))}
         </ul>
@@ -169,6 +205,21 @@ export function NegociacoesLista({ tipoNegociacao, negociacoes, carregando, busc
         onClose={() => setNegociacaoPjEditando(null)}
         onSuccess={handleSucessoPj}
         negociacaoSelecionada={negociacaoPjEditando as NegociacaoPj}
+      />
+
+      {/* Novas Features de Deleção */}
+      <DeletarNegociacaoPfFeature
+        isOpen={!!negociacaoPfDeletandoId}
+        onClose={() => setNegociacaoPfDeletandoId(null)}
+        onSuccess={handleSucessoDeletarPf}
+        negociacaoId={negociacaoPfDeletandoId}
+      />
+
+      <DeletarNegociacaoPjFeature
+        isOpen={!!negociacaoPjDeletandoId}
+        onClose={() => setNegociacaoPjDeletandoId(null)}
+        onSuccess={handleSucessoDeletarPj}
+        negociacaoId={negociacaoPjDeletandoId}
       />
 
       <ToastFeedback mensagem={mensagem} />
