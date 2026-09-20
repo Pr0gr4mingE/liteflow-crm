@@ -10,9 +10,10 @@ interface EditarNegociacaoPjModalProps {
   isOpen: boolean;
   onClose: () => void;
   negociacaoSelecionada: NegociacaoPj | null;
+  onSuccess: () => void;
 }
 
-export function EditarNegociacaoPjFeature({ isOpen, onClose, negociacaoSelecionada }: EditarNegociacaoPjModalProps) {
+export function EditarNegociacaoPjFeature({ isOpen, onClose, negociacaoSelecionada, onSuccess }: EditarNegociacaoPjModalProps) {
   const [isSalvando, setIsSalvando] = useState(false);
 
   if (!isOpen || !negociacaoSelecionada) return null;
@@ -35,7 +36,7 @@ export function EditarNegociacaoPjFeature({ isOpen, onClose, negociacaoSeleciona
     >
       <EditarNegociacaoPjForm
         negociacaoAtual={negociacaoSelecionada}
-        onSuccess={onClose}
+        onSuccess={onSuccess}
         onLoadingChange={setIsSalvando}
       />
     </Modal>

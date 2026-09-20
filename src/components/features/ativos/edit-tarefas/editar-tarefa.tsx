@@ -11,13 +11,15 @@ interface EditarTarefaModalProps {
   onClose: () => void;
   tarefaSelecionada: Tarefa | null;
   tipoNegociacao?: "PF" | "PJ";
+  onSuccess: () => void;
 }
 
 export function EditarTarefaFeature({ 
   isOpen, 
   onClose, 
   tarefaSelecionada, 
-  tipoNegociacao 
+  tipoNegociacao,
+  onSuccess
 }: EditarTarefaModalProps) {
   const [isSalvando, setIsSalvando] = useState(false);
 
@@ -42,7 +44,7 @@ export function EditarTarefaFeature({
       <EditarTarefaForm
         tarefaAtual={tarefaSelecionada}
         tipoNegociacao={tipoNegociacao}
-        onSuccess={onClose}
+        onSuccess={onSuccess}
         onLoadingChange={setIsSalvando}
       />
     </Modal>

@@ -10,9 +10,10 @@ interface EditarClientePjModalProps {
   isOpen: boolean;
   onClose: () => void;
   clienteSelecionado: ClientePj | null;
+  onSuccess: () => void;
 }
 
-export function EditarClientePjFeature({ isOpen, onClose, clienteSelecionado }: EditarClientePjModalProps) {
+export function EditarClientePjFeature({ isOpen, onClose, clienteSelecionado, onSuccess }: EditarClientePjModalProps) {
   const [isSalvando, setIsSalvando] = useState(false);
 
   if (!isOpen || !clienteSelecionado) return null;
@@ -35,7 +36,7 @@ export function EditarClientePjFeature({ isOpen, onClose, clienteSelecionado }: 
     >
       <EditarClientePjForm
         clienteAtual={clienteSelecionado}
-        onSuccess={onClose}
+        onSuccess={onSuccess}
         onLoadingChange={setIsSalvando}
       />
     </Modal>
