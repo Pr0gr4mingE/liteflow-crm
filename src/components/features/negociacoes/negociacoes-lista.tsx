@@ -4,29 +4,14 @@ import { TipoNegociacao } from "@/hooks/listagem/negociacoes/use-negociacoes.hoo
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
 import { obterLabelFaseNegociacao } from "@/shared/utils/negociacoes/label-fase-negociacao.util";
 import { NegociacaoPjListagem } from "@/shared/types/ui/listagem/negociacoes/negociacao-pj-listagem.type";
+import { formatarMoedaBRL } from "@/shared/utils/formatacao/formatar-moeda.util";
+import { EstiloTituloFase } from "@/shared/utils/formatacao/estilo-titulo-fase-negociacao.util";
 
 interface NegociacoesListaProps {
   tipoNegociacao: TipoNegociacao;
   negociacoes: NegociacaoPfListagem[] | NegociacaoPjListagem[];
   carregando: boolean;
   busca: string;
-}
-
-function formatarMoeda(valor: number | string) {
-  return new Intl.NumberFormat("pt-BR", {
-    style: "currency",
-    currency: "BRL",
-  }).format(Number(valor) || 0);
-}
-
-function classeFase(fase: string) {
-  if (fase === "DESISTENCIA" || fase === "INDEFERIDO") {
-    return "bg-red-50 text-red-700 border-red-200";
-  }
-  if (fase === "CONVERSAO" || fase === "FECHADO") {
-    return "bg-emerald-50 text-emerald-700 border-emerald-200";
-  }
-  return "bg-slate-50 text-slate-700 border-slate-200";
 }
 
 function SkeletonLista() {
@@ -66,7 +51,7 @@ function CardNegociacao({
               {negociacao.titulo}
             </h3>
             <span
-              className={`inline-flex rounded-md border px-2 py-0.5 text-xs font-medium ${classeFase(negociacao.fase)}`}
+              className={`inline-flex rounded-md border px-2 py-0.5 text-xs font-medium ${EstiloTituloFase(negociacao.fase)}`}
             >
               {obterLabelFaseNegociacao(negociacao.fase, tipoNegociacao)}
             </span>
@@ -79,7 +64,7 @@ function CardNegociacao({
             </span>
             <span className="inline-flex items-center gap-1.5 font-medium text-emerald-600">
               <Banknote className="h-3.5 w-3.5" />
-              {formatarMoeda(negociacao.valor)}
+              {formatarMoedaBRL(negociacao.valor)}
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Calendar className="h-3.5 w-3.5 text-slate-400" />

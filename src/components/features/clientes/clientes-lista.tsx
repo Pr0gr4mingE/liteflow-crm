@@ -3,35 +3,15 @@ import { ClientePf } from "@/shared/types/domain/ativos/clientes/ICliente-pf";
 import { ClientePj } from "@/shared/types/domain/ativos/clientes/ICliente-pj";
 import { TipoCliente } from "@/hooks/listagem/clientes/use-clientes.hook";
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
+import { formatarCpf } from "@/shared/utils/formatacao/formatar-cpf.util";
+import { formatarCnpj } from "@/shared/utils/formatacao/formatar-cnpj.util";
+import { formatarTelefone } from "@/shared/utils/formatacao/formatar-telefone.util";
 
 interface ClientesListaProps {
   tipoCliente: TipoCliente;
   clientes: ClientePf[] | ClientePj[];
   carregando: boolean;
   busca: string;
-}
-
-function formatarCpf(cpf: string) {
-  const digitos = cpf.replace(/\D/g, "");
-  if (digitos.length !== 11) return cpf;
-  return digitos.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-}
-
-function formatarCnpj(cnpj: string) {
-  const digitos = cnpj.replace(/\D/g, "");
-  if (digitos.length !== 14) return cnpj;
-  return digitos.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d{2})/, "$1.$2.$3/$4-$5");
-}
-
-function formatarTelefone(telefone: string) {
-  const digitos = telefone.replace(/\D/g, "");
-  if (digitos.length === 11) {
-    return digitos.replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
-  }
-  if (digitos.length === 10) {
-    return digitos.replace(/(\d{2})(\d{4})(\d{4})/, "($1) $2-$3");
-  }
-  return telefone;
 }
 
 function SkeletonLista() {

@@ -2,29 +2,13 @@ import { CheckCircle2, Clock, Calendar, User, Briefcase } from "lucide-react";
 import { TarefaListagem } from "@/shared/types/ui/listagem/tarefas/tarefa-listagem.type";
 import { FiltroStatusTarefa } from "@/hooks/listagem/tarefas/use-tarefas.hook";
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
+import { EstiloTituloTipoTarefa } from "@/shared/utils/formatacao/estilo-titulo-tipo-tarefa.util";
 
 interface TarefasListaProps {
   filtroStatus: FiltroStatusTarefa;
   tarefas: TarefaListagem[];
   carregando: boolean;
   busca: string;
-}
-
-// Estilização semântica agrupando os tipos do domínio
-function obterEstiloETituloTipo(tipo: string) {
-  const label = tipo.replace(/_/g, " ").toLowerCase().replace(/\b\w/g, l => l.toUpperCase());
-  
-  const tiposB2b = ["REUNIAO_APRESENTACAO", "ENVIO_PROPOSTA"];
-  const tiposB2c = ["DISPARO_CAMPANHA", "LEMBRETE_RECOMPRA", "ANALISE_DADOS"];
-  
-  if (tiposB2b.includes(tipo)) {
-    return { label, classes: "text-indigo-700 bg-indigo-50 border-indigo-200" };
-  }
-  if (tiposB2c.includes(tipo)) {
-    return { label, classes: "text-fuchsia-700 bg-fuchsia-50 border-fuchsia-200" };
-  }
-  // LIGACAO, EMAIL, LEMBRETE
-  return { label, classes: "text-slate-700 bg-slate-100 border-slate-200" };
 }
 
 function SkeletonLista() {
@@ -45,7 +29,7 @@ function SkeletonLista() {
 }
 
 function CardTarefa({ tarefa }: { tarefa: TarefaListagem }) {
-  const { label, classes } = obterEstiloETituloTipo(tarefa.tipo);
+  const { label, classes } = EstiloTituloTipoTarefa(tarefa.tipo);
 
   return (
     <li className="rounded-lg border border-slate-200/60 bg-white p-4 shadow-sm transition-hover hover:border-blue-300">
