@@ -1,10 +1,13 @@
 import { ReactNode } from "react";
+import { TipoAtivo } from "@/hooks/modals/use-buscar-titulo-ativo.hook";
 
 export interface ConfirmarExclusaoModalProps {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: () => void | Promise<void>;
-  titulo: string;
+  ativoId: string | null;
+  tipoAtivo: TipoAtivo;
+  tituloFallback: string;
   descricao: ReactNode;
   isDeletando: boolean;
 }

@@ -4,36 +4,51 @@ import { Modal } from "@/components/ui/modal/modal";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import { ConfirmarExclusaoModalProps } from "@/shared/types/ui/modal/confirmar-exclusao-modal.props";
+import { useBuscarTituloAtivo } from "@/hooks/modals/use-buscar-titulo-ativo.hook";
 
 export function ConfirmarExclusaoModal({
   isOpen,
   onClose,
   onConfirm,
-  titulo,
+  ativoId,
+  tipoAtivo,
+  tituloFallback,
   descricao,
   isDeletando,
 }: ConfirmarExclusaoModalProps) {
+  // O Modal agora é autossuficiente para buscar seu próprio título
+  const { titulo, carregandoTitulo } = useBuscarTituloAtivo(ativoId, tipoAtivo);
+
   if (!isOpen) return null;
+
+  // Unifica os estados de carregamento (busca de titulo + delecao em andamento)
+  const isBloqueado = isDeletando || carregandoTitulo;
+
+  const tituloModal = carregandoTitulo 
+    ? "A carregar informações..." 
+    : titulo 
+      ? `Excluir "${titulo}"` 
+      : tituloFallback;
 
   return (
     <Modal
       isOpen={isOpen}
-      onClose={isDeletando ? () => {} : onClose}
-      titulo={titulo} // Tipagem estrita respeitada (apenas string)
+      onClose={isBloqueado ? () => {} : onClose}
+      titulo={tituloModal} 
       footer={
         <div className="flex w-full justify-end gap-3">
           <Button 
             type="button" 
             variant="ghost" 
             onClick={onClose} 
-            disabled={isDeletando}
+            disabled={isBloqueado}
           >
             Cancelar
           </Button>
           <Button 
             type="button" 
             onClick={onConfirm} 
-            disabled={isDeletando}
+            disabled={isBloqueado}
             className="bg-red-600 text-white hover:bg-red-700"
           >
             {isDeletando ? "Excluindo..." : "Sim, Excluir"}
