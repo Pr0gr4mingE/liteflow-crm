@@ -1,8 +1,13 @@
-import { CheckCircle2, Clock, Calendar, User, Briefcase } from "lucide-react";
+import { useState } from "react";
+import { CheckCircle2, Clock, Calendar, User, Briefcase, Pencil } from "lucide-react";
 import { TarefaListagem } from "@/shared/types/ui/listagem/tarefas/tarefa-listagem.type";
 import { FiltroStatusTarefa } from "@/hooks/listagem/tarefas/use-tarefas.hook";
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
 import { EstiloTituloTipoTarefa } from "@/shared/utils/formatacao/estilo-titulo-tipo-tarefa.util";
+
+// Import do envelope de edição
+import { EditarTarefaFeature } from "@/components/features/ativos/edit-tarefas/editar-tarefa";
+import { Tarefa } from "@/shared/types/domain/ativos/tarefas/ITarefa";
 
 interface TarefasListaProps {
   filtroStatus: FiltroStatusTarefa;
@@ -15,10 +20,7 @@ function SkeletonLista() {
   return (
     <ul className="space-y-3">
       {Array.from({ length: 4 }).map((_, index) => (
-        <li
-          key={index}
-          className="rounded-lg border border-slate-200/60 bg-white p-4 shadow-sm"
-        >
+        <li key={index} className="rounded-lg border border-slate-200/60 bg-white p-4 shadow-sm">
           <div className="mb-3 h-5 w-1/3 animate-pulse rounded bg-slate-200" />
           <div className="mb-2 h-4 w-1/2 animate-pulse rounded bg-slate-200" />
           <div className="h-4 w-2/3 animate-pulse rounded bg-slate-200" />
@@ -28,7 +30,13 @@ function SkeletonLista() {
   );
 }
 
-function CardTarefa({ tarefa }: { tarefa: TarefaListagem }) {
+function CardTarefa({ 
+  tarefa, 
+  onEdit 
+}: { 
+  tarefa: TarefaListagem;
+  onEdit: () => void;
+}) {
   const { label, classes } = EstiloTituloTipoTarefa(tarefa.tipo);
 
   return (
@@ -77,20 +85,26 @@ function CardTarefa({ tarefa }: { tarefa: TarefaListagem }) {
           )}
         </div>
 
-        <span className="shrink-0 text-xs text-slate-400">
-          Criada em {formatarDataPtBr(tarefa.dataCriacao)}
-        </span>
+        {/* Botão de Edição + Data */}
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-xs text-slate-400">Criada em {formatarDataPtBr(tarefa.dataCriacao)}</span>
+          <button 
+            onClick={onEdit}
+            className="rounded-md p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+            title="Editar Tarefa"
+          >
+            <Pencil className="h-4 w-4" />
+          </button>
+        </div>
       </div>
     </li>
   );
 }
 
-export function TarefasLista({
-  filtroStatus,
-  tarefas,
-  carregando,
-  busca,
-}: TarefasListaProps) {
+export function TarefasLista({ filtroStatus, tarefas, carregando, busca }: TarefasListaProps) {
+  // Estado para edição
+  const [tarefaEditando, setTarefaEditando] = useState<TarefaListagem | null>(null);
+
   if (carregando) {
     return (
       <div className="rounded-xl border border-slate-200 bg-slate-100 p-6 shadow-sm">
@@ -114,12 +128,25 @@ export function TarefasLista({
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-100 p-4 shadow-sm md:p-6">
-      <ul className="space-y-3">
-        {tarefas.map((tarefa) => (
-          <CardTarefa key={tarefa.id} tarefa={tarefa} />
-        ))}
-      </ul>
-    </div>
+    <>
+      <div className="rounded-xl border border-slate-200 bg-slate-100 p-4 shadow-sm md:p-6">
+        <ul className="space-y-3">
+          {tarefas.map((tarefa) => (
+            <CardTarefa 
+              key={tarefa.id} 
+              tarefa={tarefa} 
+              onEdit={() => setTarefaEditando(tarefa)}
+            />
+          ))}
+        </ul>
+      </div>
+
+      {/* Envelope de Edição acoplado aqui */}
+      <EditarTarefaFeature
+        isOpen={!!tarefaEditando}
+        onClose={() => setTarefaEditando(null)}
+        tarefaSelecionada={tarefaEditando as Tarefa}
+      />
+    </>
   );
 }
