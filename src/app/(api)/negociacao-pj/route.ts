@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { makeCriarNegociacaoPjHandler } from "@/modules/negociacao-pj/factories/criar-negociacao-pj.factory";
 import { makeListarNegociacoesPjHandler } from "@/modules/negociacao-pj/factories/listar-negociacao-pj.factory";
 import { makeAtualizarNegociacaoPjHandler } from "@/modules/negociacao-pj/factories/atualizar-negociacao-pj.factory";
+import { makeDeletarNegociacaoPjHandler } from "@/modules/negociacao-pj/factories/deletar-negociacao-pj.factory";
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,4 +52,29 @@ export async function PUT(request: NextRequest) {
   const response = await handler.handle(id, dados);
 
   return NextResponse.json(response, { status: response.sucesso ? 200 : 400 });
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { sucesso: false, mensagem: "ID não fornecido para exclusão." },
+        { status: 400 }
+      );
+    }
+
+    const handler = makeDeletarNegociacaoPjHandler();
+    const resposta = await handler.handle(id);
+
+    return NextResponse.json(resposta, { status: resposta.sucesso ? 200 : 400 });
+  } catch (error) {
+    console.error("[API Negociacao PJ DELETE] Erro não tratado:", error);
+    return NextResponse.json(
+      { sucesso: false, mensagem: "Erro interno no servidor." },
+      { status: 500 }
+    );
+  }
 }

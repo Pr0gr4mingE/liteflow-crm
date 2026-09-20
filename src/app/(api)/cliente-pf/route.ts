@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { makeCriarClientePfHandler } from "@/modules/cliente-pf/factories/criar-cliente-pf.factory";
 import { makeListarClientesPfHandler } from "@/modules/cliente-pf/factories/listar-cliente-pf.factory";
 import { makeAtualizarClientePfHandler } from "@/modules/cliente-pf/factories/atualizar-cliente-pf.factory";
+import { makeDeletarClientePfHandler } from "@/modules/cliente-pf/factories/deletar-cliente-pf.factory";
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,4 +52,29 @@ export async function PUT(request: NextRequest) {
   const response = await handler.handle(id, dados);
 
   return NextResponse.json(response, { status: response.sucesso ? 200 : 400 });
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return NextResponse.json(
+        { sucesso: false, mensagem: "ID não fornecido para exclusão." },
+        { status: 400 }
+      );
+    }
+
+    const handler = makeDeletarClientePfHandler();
+    const resposta = await handler.handle(id);
+
+    return NextResponse.json(resposta, { status: resposta.sucesso ? 200 : 400 });
+  } catch (error) {
+    console.error("[API Cliente PF DELETE] Erro não tratado:", error);
+    return NextResponse.json(
+      { sucesso: false, mensagem: "Erro interno no servidor." },
+      { status: 500 }
+    );
+  }
 }
