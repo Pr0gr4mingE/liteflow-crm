@@ -1,4 +1,4 @@
-import { ClientesFeature } from "@/components/features/clientes/clientes";
+import { ClientesFeature } from "@/components/features/listas/clientes/clientes";
 
 export default function ClientesPage() {
   return (

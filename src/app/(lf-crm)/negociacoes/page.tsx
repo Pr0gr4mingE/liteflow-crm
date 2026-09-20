@@ -1,4 +1,4 @@
-import { NegociacoesFeature } from "@/components/features/negociacoes/negociacoes";
+import { NegociacoesFeature } from "@/components/features/listas/negociacoes/negociacoes";
 
 export default function NegociacoesPage() {
   return (

@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { TarefasFeature } from "@/components/features/tarefas/tarefas";
+import { TarefasFeature } from "@/components/features/listas/tarefas/tarefas";
 
 export const metadata: Metadata = {
   title: "Tarefas | LiteFlow CRM",
