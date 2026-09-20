@@ -5,15 +5,18 @@ import { FiltroStatusTarefa } from "@/hooks/listagem/tarefas/use-tarefas.hook";
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
 import { EstiloTituloTipoTarefa } from "@/shared/utils/formatacao/estilo-titulo-tipo-tarefa.util";
 
-// Import do envelope de edição
 import { EditarTarefaFeature } from "@/components/features/ativos/edit-tarefas/editar-tarefa";
 import { Tarefa } from "@/shared/types/domain/ativos/tarefas/ITarefa";
+
+import { useFeedback } from "@/shared/hooks/ui/use-feedback.hook";
+import { ToastFeedback } from "@/components/ui/feedback/toast-feedback";
 
 interface TarefasListaProps {
   filtroStatus: FiltroStatusTarefa;
   tarefas: TarefaListagem[];
   carregando: boolean;
   busca: string;
+  onAtualizar: () => void;
 }
 
 function SkeletonLista() {
@@ -85,7 +88,6 @@ function CardTarefa({
           )}
         </div>
 
-        {/* Botão de Edição + Data */}
         <div className="flex items-center gap-3 shrink-0">
           <span className="text-xs text-slate-400">Criada em {formatarDataPtBr(tarefa.dataCriacao)}</span>
           <button 
@@ -101,9 +103,15 @@ function CardTarefa({
   );
 }
 
-export function TarefasLista({ filtroStatus, tarefas, carregando, busca }: TarefasListaProps) {
-  // Estado para edição
+export function TarefasLista({ filtroStatus, tarefas, carregando, busca, onAtualizar }: TarefasListaProps) {
   const [tarefaEditando, setTarefaEditando] = useState<TarefaListagem | null>(null);
+  const { mensagem, mostrarSucesso } = useFeedback();
+
+  function handleSucesso() {
+    setTarefaEditando(null);
+    mostrarSucesso("Tarefa");
+    onAtualizar();
+  }
 
   if (carregando) {
     return (
@@ -141,12 +149,14 @@ export function TarefasLista({ filtroStatus, tarefas, carregando, busca }: Taref
         </ul>
       </div>
 
-      {/* Envelope de Edição acoplado aqui */}
       <EditarTarefaFeature
         isOpen={!!tarefaEditando}
         onClose={() => setTarefaEditando(null)}
+        onSuccess={handleSucesso}
         tarefaSelecionada={tarefaEditando as Tarefa}
       />
+
+      <ToastFeedback mensagem={mensagem} />
     </>
   );
 }

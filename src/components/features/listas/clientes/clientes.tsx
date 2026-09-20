@@ -117,6 +117,7 @@ export function ClientesFeature() {
         clientes={clientes}
         carregando={carregando}
         busca={busca}
+        onAtualizar={refetch}
       />
     </div>
   );

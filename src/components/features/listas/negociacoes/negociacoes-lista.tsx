@@ -8,17 +8,20 @@ import { NegociacaoPjListagem } from "@/shared/types/ui/listagem/negociacoes/neg
 import { formatarMoedaBRL } from "@/shared/utils/formatacao/formatar-moeda.util";
 import { EstiloTituloFase } from "@/shared/utils/formatacao/estilo-titulo-fase-negociacao.util";
 
-// Imports dos envelopes de edição
 import { EditarNegociacaoPfFeature } from "@/components/features/ativos/edit-negociacoes/editar-negociacao-pf";
 import { EditarNegociacaoPjFeature } from "@/components/features/ativos/edit-negociacoes/editar-negociacao-pj";
 import { NegociacaoPf } from "@/shared/types/domain/ativos/negociacoes/INegociacao-pf";
 import { NegociacaoPj } from "@/shared/types/domain/ativos/negociacoes/INegociacao-pj";
+
+import { useFeedback } from "@/shared/hooks/ui/use-feedback.hook";
+import { ToastFeedback } from "@/components/ui/feedback/toast-feedback";
 
 interface NegociacoesListaProps {
   tipoNegociacao: TipoNegociacao;
   negociacoes: NegociacaoPfListagem[] | NegociacaoPjListagem[];
   carregando: boolean;
   busca: string;
+  onAtualizar: () => void;
 }
 
 function SkeletonLista() {
@@ -38,7 +41,7 @@ function SkeletonLista() {
 function CardNegociacao({
   negociacao,
   tipoNegociacao,
-  onEdit, // Novo prop recebido
+  onEdit,
 }: {
   negociacao: NegociacaoPfListagem | NegociacaoPjListagem;
   tipoNegociacao: TipoNegociacao;
@@ -82,7 +85,6 @@ function CardNegociacao({
           )}
         </div>
 
-        {/* Botão de Edição + Data */}
         <div className="flex items-center gap-3 shrink-0">
           <span className="text-xs text-slate-400">Desde {formatarDataPtBr(negociacao.dataCriacao)}</span>
           <button 
@@ -98,10 +100,22 @@ function CardNegociacao({
   );
 }
 
-export function NegociacoesLista({ tipoNegociacao, negociacoes, carregando, busca }: NegociacoesListaProps) {
-  // Estado para edição
+export function NegociacoesLista({ tipoNegociacao, negociacoes, carregando, busca, onAtualizar }: NegociacoesListaProps) {
   const [negociacaoPfEditando, setNegociacaoPfEditando] = useState<NegociacaoPfListagem | null>(null);
   const [negociacaoPjEditando, setNegociacaoPjEditando] = useState<NegociacaoPjListagem | null>(null);
+  const { mensagem, mostrarSucesso } = useFeedback();
+
+  function handleSucessoPf() {
+    setNegociacaoPfEditando(null);
+    mostrarSucesso("Negociação");
+    onAtualizar();
+  }
+
+  function handleSucessoPj() {
+    setNegociacaoPjEditando(null);
+    mostrarSucesso("Negociação corporativa");
+    onAtualizar();
+  }
 
   if (carregando) {
     return (
@@ -143,18 +157,21 @@ export function NegociacoesLista({ tipoNegociacao, negociacoes, carregando, busc
         </ul>
       </div>
 
-      {/* Envelopes de Edição acoplados aqui */}
       <EditarNegociacaoPfFeature
         isOpen={!!negociacaoPfEditando}
         onClose={() => setNegociacaoPfEditando(null)}
+        onSuccess={handleSucessoPf}
         negociacaoSelecionada={negociacaoPfEditando as NegociacaoPf} 
       />
 
       <EditarNegociacaoPjFeature
         isOpen={!!negociacaoPjEditando}
         onClose={() => setNegociacaoPjEditando(null)}
+        onSuccess={handleSucessoPj}
         negociacaoSelecionada={negociacaoPjEditando as NegociacaoPj}
       />
+
+      <ToastFeedback mensagem={mensagem} />
     </>
   );
 }

@@ -113,6 +113,7 @@ export function TarefasFeature() {
         tarefas={tarefas}
         carregando={carregando}
         busca={busca}
+        onAtualizar={refetch}
       />
     </div>
   );

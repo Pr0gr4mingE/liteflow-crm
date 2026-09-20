@@ -8,15 +8,18 @@ import { formatarCpf } from "@/shared/utils/formatacao/formatar-cpf.util";
 import { formatarCnpj } from "@/shared/utils/formatacao/formatar-cnpj.util";
 import { formatarTelefone } from "@/shared/utils/formatacao/formatar-telefone.util";
 
-// Imports dos envelopes de edição
 import { EditarClientePfFeature } from "@/components/features/ativos/edit-clientes/editar-cliente-pf";
 import { EditarClientePjFeature } from "@/components/features/ativos/edit-clientes/editar-cliente-pj";
+
+import { useFeedback } from "@/shared/hooks/ui/use-feedback.hook";
+import { ToastFeedback } from "@/components/ui/feedback/toast-feedback";
 
 interface ClientesListaProps {
   tipoCliente: TipoCliente;
   clientes: ClientePf[] | ClientePj[];
   carregando: boolean;
   busca: string;
+  onAtualizar: () => void;
 }
 
 function SkeletonLista() {
@@ -33,10 +36,22 @@ function SkeletonLista() {
   );
 }
 
-export function ClientesLista({ tipoCliente, clientes, carregando, busca }: ClientesListaProps) {
-  // Estados para controlar qual cliente está sendo editado
+export function ClientesLista({ tipoCliente, clientes, carregando, busca, onAtualizar }: ClientesListaProps) {
   const [clientePfEditando, setClientePfEditando] = useState<ClientePf | null>(null);
   const [clientePjEditando, setClientePjEditando] = useState<ClientePj | null>(null);
+  const { mensagem, mostrarSucesso } = useFeedback();
+
+  function handleSucessoPf() {
+    setClientePfEditando(null);
+    mostrarSucesso("Cliente Pessoa Física");
+    onAtualizar();
+  }
+
+  function handleSucessoPj() {
+    setClientePjEditando(null);
+    mostrarSucesso("Empresa");
+    onAtualizar();
+  }
 
   if (carregando) {
     return (
@@ -80,7 +95,6 @@ export function ClientesLista({ tipoCliente, clientes, carregando, busca }: Clie
                       </div>
                     </div>
                     
-                    {/* Botão de Edição + Data */}
                     <div className="flex items-center gap-3 shrink-0">
                       <span className="text-xs text-slate-400">Desde {formatarDataPtBr(cliente.dataCriacao)}</span>
                       <button 
@@ -112,7 +126,6 @@ export function ClientesLista({ tipoCliente, clientes, carregando, busca }: Clie
                       </div>
                     </div>
                     
-                    {/* Botão de Edição + Data */}
                     <div className="flex items-center gap-3 shrink-0">
                       <span className="text-xs text-slate-400">Desde {formatarDataPtBr(cliente.dataCriacao)}</span>
                       <button 
@@ -129,18 +142,21 @@ export function ClientesLista({ tipoCliente, clientes, carregando, busca }: Clie
         </ul>
       </div>
 
-      {/* Envelopes de Edição acoplados aqui */}
       <EditarClientePfFeature
         isOpen={!!clientePfEditando}
         onClose={() => setClientePfEditando(null)}
+        onSuccess={handleSucessoPf}
         clienteSelecionado={clientePfEditando as ClientePf}
       />
       
       <EditarClientePjFeature
         isOpen={!!clientePjEditando}
         onClose={() => setClientePjEditando(null)}
+        onSuccess={handleSucessoPj}
         clienteSelecionado={clientePjEditando as ClientePj}
       />
+
+      <ToastFeedback mensagem={mensagem} />
     </>
   );
 }

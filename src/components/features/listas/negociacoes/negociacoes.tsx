@@ -113,6 +113,7 @@ export function NegociacoesFeature() {
         negociacoes={negociacoes}
         carregando={carregando}
         busca={busca}
+        onAtualizar={refetch}
       />
     </div>
   );
