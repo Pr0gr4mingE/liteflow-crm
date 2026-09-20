@@ -23,4 +23,7 @@ export interface ITarefaRepository {
   
   // NOVO: Listagem geral para o Front-end
   listarPorUsuarioId(usuarioId: string): Promise<Tarefa[]>;
+
+  // exclusões
+  deletar(id: string): Promise<boolean>;
 }

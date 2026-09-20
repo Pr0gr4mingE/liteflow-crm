@@ -81,4 +81,12 @@ export class NegociacaoPfRepository implements INegociacaoPfRepository {
     return negociacoes as NegociacaoPf[];
   }
 
+  async deletar(id: string): Promise<boolean> {
+      const [resultado] = await db
+        .delete(negociacoesPfTable)
+        .where(eq(negociacoesPfTable.id, id))
+        .returning({ id: negociacoesPfTable.id });
+        
+      return !!resultado;
+    }
 }

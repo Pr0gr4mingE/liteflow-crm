@@ -99,4 +99,13 @@ export class TarefaRepository implements ITarefaRepository {
 
     return tarefas as Tarefa[];
   }
+
+  async deletar(id: string): Promise<boolean> {
+      const [resultado] = await db
+        .delete(tarefasTable)
+        .where(eq(tarefasTable.id, id))
+        .returning({ id: tarefasTable.id });
+        
+      return !!resultado;
+    }
 }

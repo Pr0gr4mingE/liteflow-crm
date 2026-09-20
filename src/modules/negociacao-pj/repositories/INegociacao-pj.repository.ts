@@ -19,4 +19,7 @@ export interface INegociacaoPjRepository {
   buscarPorTitulo(tiulo: string): Promise<NegociacaoPj[]>;
   buscarPorIntervaloDeValor(valorMin: number, valorMax: number): Promise<NegociacaoPj[]>;
   listarPorUsuarioId(usuarioId: string): Promise<NegociacaoPj[]>;
+
+  // exclusões
+  deletar(id: string): Promise<boolean>;
 }

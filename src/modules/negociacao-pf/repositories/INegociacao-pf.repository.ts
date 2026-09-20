@@ -19,4 +19,7 @@ export interface INegociacaoPfRepository {
   buscarPorTitulo(titulo: string): Promise<NegociacaoPf[]>;
   buscarPorIntervaloDeValor(valorMin: number, valorMax: number): Promise<NegociacaoPf[]>;
   listarPorUsuarioId(usuarioId: string): Promise<NegociacaoPf[]>;
+
+  // exclusões
+  deletar(id: string): Promise<boolean>;
 }

@@ -80,4 +80,13 @@ export class NegociacaoPjRepository implements INegociacaoPjRepository {
 
     return negociacoes as NegociacaoPj[];
   }
+
+  async deletar(id: string): Promise<boolean> {
+      const [resultado] = await db
+        .delete(negociacoesPjTable)
+        .where(eq(negociacoesPjTable.id, id))
+        .returning({ id: negociacoesPjTable.id });
+        
+      return !!resultado;
+    }
 }

@@ -55,4 +55,13 @@ export class ClientePfRepository implements IClientePfRepository {
       
     return clientes as ClientePf[];
   }
+
+  async deletar(id: string): Promise<boolean> {
+      const [resultado] = await db
+        .delete(clientesPfTable)
+        .where(eq(clientesPfTable.id, id))
+        .returning({ id: clientesPfTable.id });
+        
+      return !!resultado;
+    }
 }

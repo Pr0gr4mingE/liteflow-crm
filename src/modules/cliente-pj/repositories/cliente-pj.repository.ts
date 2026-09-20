@@ -63,4 +63,13 @@ export class ClientePjRepository implements IClientePjRepository {
         
       return clientes as ClientePj[];
     }
+
+  async deletar(id: string): Promise<boolean> {
+      const [resultado] = await db
+        .delete(clientesPjTable)
+        .where(eq(clientesPjTable.id, id))
+        .returning({ id: clientesPjTable.id });
+        
+      return !!resultado;
+    }
 }
