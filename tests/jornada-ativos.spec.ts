@@ -46,12 +46,17 @@ test.describe("E2E: Jornada de Cadastro de Ativos (Clientes e Negociações)", (
     // Troca a sub-aba para PJ
     await page.getByRole("button", { name: "Conta (PJ)" }).click();
 
-    // Aguarda o select carregar os dados (isPending ficar falso e remover o disabled)
-    const selectEmpresa = page.getByLabel("Selecione a Empresa *");
-    await expect(selectEmpresa).not.toBeDisabled({ timeout: 5000 });
+    // Aguarda o input do Autocomplete carregar os dados (isPending ficar falso e remover o disabled)
+    const inputEmpresa = page.getByLabel("Selecione a Empresa *");
+    await expect(inputEmpresa).not.toBeDisabled({ timeout: 5000 });
 
-    // Seleciona o primeiro cliente da lista pelo index, útil em ambientes de teste
-    await selectEmpresa.selectOption({ index: 1 });
+    // Simula o clique do usuário para abrir o dropdown customizado
+    await inputEmpresa.click();
+
+    // Aguarda a lista suspensa (ul/li) aparecer e clica na primeira empresa da lista
+    const primeiraOpcao = page.locator("li.cursor-pointer").first();
+    await expect(primeiraOpcao).toBeVisible();
+    await primeiraOpcao.click();
 
     // Preenche os dados da negociação
     await page.getByLabel("Título da Negociação Corporativa *").fill("Mentoria E2E");
