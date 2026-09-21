@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import { useState, useMemo } from "react";
 import { KanbanBoard as KanbanBoardUI } from "@/components/ui/kanban/kanban-board";
 import { useKanban } from "@/hooks/kanban/use-kanban.hook";
