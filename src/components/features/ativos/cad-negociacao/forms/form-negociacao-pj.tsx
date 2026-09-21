@@ -3,10 +3,17 @@
 
 import { useCadastrarNegociacaoPj } from "@/hooks/ativos/cad-negociacoes/use-cad-negociacao-pj.hook";
 import { useListarClientesPj } from "@/hooks/ativos/buscar-clientes/use-listar-cliente-pj.hook";
+import { useAutocomplete } from "@/shared/hooks/busca/use-autocomplete.hook";
 
 export function FormNegociacaoPj() {
   const { cadastrar, isPending, erro } = useCadastrarNegociacaoPj();
   const { clientes, isLoading: carregandoClientes } = useListarClientesPj();
+
+  const autocomplete = useAutocomplete(
+    clientes,
+    (c) => c.razaoSocial, // Para PJ, seria (c) => c.razaoSocial
+    (c) => c.id
+  );
 
   const handleSubmit = async (formData: FormData) => {
     const sucesso = await cadastrar(formData);
@@ -19,22 +26,45 @@ export function FormNegociacaoPj() {
 
   return (
     <form action={handleSubmit} className="space-y-4">
-      <div className="flex flex-col gap-1 mb-4">
-        <label htmlFor="clienteId" className="text-sm font-medium text-gray-700">Selecione a Empresa *</label>
-        <select 
-          id="clienteId" 
-          name="clienteId" 
-          required 
+      <div className="flex flex-col gap-1 mb-4 relative">
+        <label htmlFor="busca-empresa" className="text-sm font-medium text-gray-700">
+          Selecione a Empresa *
+        </label>
+        
+        <input type="hidden" name="clienteId" value={autocomplete.idSelecionado} required />
+
+        <input
+          id="busca-empresa"
+          type="text"
+          placeholder={carregandoClientes ? "Carregando empresas..." : "Digite para buscar uma empresa"}
           disabled={carregandoClientes}
-          className="border p-2 rounded bg-white disabled:bg-gray-100 disabled:text-gray-500"
-        >
-          <option value="">
-            {carregandoClientes ? "Carregando empresas..." : "Selecione uma empresa"}
-          </option>
-          {clientes.map((c) => (
-            <option key={c.id} value={c.id}>{c.razaoSocial}</option>
-          ))}
-        </select>
+          value={autocomplete.getValorInput()}
+          onChange={(e) => {
+            autocomplete.setBusca(e.target.value);
+            autocomplete.setIdSelecionado("");
+            autocomplete.setIsOpen(true);
+          }}
+          onFocus={() => autocomplete.setIsOpen(true)}
+          className="border p-2 rounded bg-white disabled:bg-gray-100 disabled:text-gray-500 w-full"
+        />
+
+        {autocomplete.isOpen && !autocomplete.idSelecionado && (
+          <ul className="absolute z-10 top-[70px] left-0 w-full bg-white border border-gray-200 rounded-md shadow-lg max-h-48 overflow-y-auto">
+            {autocomplete.itensFiltrados.length > 0 ? (
+              autocomplete.itensFiltrados.map((c) => (
+                <li
+                  key={c.id}
+                  className="p-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-700"
+                  onClick={() => autocomplete.handleSelecionar(c.id)}
+                >
+                  {c.razaoSocial}
+                </li>
+              ))
+            ) : (
+              <li className="p-2 text-sm text-gray-500 text-center">Nenhuma empresa encontrada.</li>
+            )}
+          </ul>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
