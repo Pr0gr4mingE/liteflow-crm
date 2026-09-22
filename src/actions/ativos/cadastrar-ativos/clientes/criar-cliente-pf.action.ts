@@ -1,11 +1,10 @@
-// src/actions/ativos/cadastrar-ativos/clientes/criar-cliente-pf.action.ts
 "use server";
 
 import { cookies } from "next/headers";
+import { revalidatePath } from "next/cache"; // 1. Import adicionado
 import { ClientePfFormdata } from "@/shared/types/ui/formdata/ativos/cliente-pf.formdata";
 
 export async function criarClientePfAction(formData: FormData) {
-  // 1. Pegamos a chave de sessão do "bolso" do servidor
   const cookieStore = await cookies();
   const usuarioId = cookieStore.get("session_token")?.value;
 
@@ -13,7 +12,6 @@ export async function criarClientePfAction(formData: FormData) {
     return { sucesso: false, mensagem: "Usuário não autenticado. Faça login novamente." };
   }
 
-  // 2. Extração e tipagem baseada no DTO
   const payload: ClientePfFormdata = {
     nome: formData.get("nome") as string,
     cpf: formData.get("cpf") as string,
@@ -21,7 +19,6 @@ export async function criarClientePfAction(formData: FormData) {
     telefone: formData.get("telefone") as string,
   };
 
-  // 3. Injetamos o ID do responsável no payload final
   const payloadDaApi = {
     ...payload,
     usuarioResponsavelId: usuarioId
@@ -42,6 +39,9 @@ export async function criarClientePfAction(formData: FormData) {
         mensagem: dados.mensagem || "Não foi possível cadastrar o cliente.",
       };
     }
+
+    // 2. O PULO DO GATO: Limpa o cache da página após o sucesso da API
+    revalidatePath("/ativos");
 
     return {
       sucesso: true,
