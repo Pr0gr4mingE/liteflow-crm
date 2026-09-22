@@ -11,7 +11,7 @@ export async function listarNegociacoesPfAction(): Promise<NegociacaoPfListagem[
 
     if (!usuarioId) return [];
     const resposta = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/negociacao-pf?usuarioId=${usuarioId}`,
+      `${process.env.API_URL}/negociacao-pf?usuarioId=${usuarioId}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },

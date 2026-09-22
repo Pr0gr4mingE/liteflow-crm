@@ -11,7 +11,7 @@ export async function listarClientesPjAction(): Promise<ClientePj[]> {
     if (!usuarioId) return [];
 
     const resposta = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/cliente-pj?usuarioId=${usuarioId}`,
+      `${process.env.API_URL}/cliente-pj?usuarioId=${usuarioId}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },

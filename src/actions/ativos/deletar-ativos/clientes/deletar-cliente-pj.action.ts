@@ -13,7 +13,7 @@ export async function deletarClientePjAction(id: string): Promise<IRespostaDTO> 
     }
 
     const resposta = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/cliente-pj?id=${id}`,
+      `${process.env.API_URL}/cliente-pj?id=${id}`,
       {
         method: "DELETE",
         headers: { 

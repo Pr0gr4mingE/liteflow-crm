@@ -4,7 +4,7 @@ import { CriarTarefaFormData } from "@/shared/types/ui/formdata/ativos/tarefas.f
 
 export async function atualizarTarefaAction(id: string, dados: Partial<CriarTarefaFormData>) {
   try {
-    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tarefas`, {
+    const resposta = await fetch(`${process.env.API_URL}/tarefas`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, ...dados }),

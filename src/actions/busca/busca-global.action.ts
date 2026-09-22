@@ -17,7 +17,7 @@ export async function buscaGlobalAction(termo: string): Promise<RespostaBuscaGlo
     }
 
     const resposta = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/busca?q=${encodeURIComponent(termo.trim())}`,
+      `${process.env.API_URL}/busca?q=${encodeURIComponent(termo.trim())}`,
       {
         method: "GET",
         headers: {

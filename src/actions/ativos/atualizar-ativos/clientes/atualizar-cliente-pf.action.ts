@@ -4,7 +4,7 @@ import { ClientePfFormdata } from "@/shared/types/ui/formdata/ativos/cliente-pf.
 
 export async function atualizarClientePfAction(id: string, dados: Partial<ClientePfFormdata>) {
   try {
-    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cliente-pf`, {
+    const resposta = await fetch(`${process.env.API_URL}/cliente-pf`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, ...dados }),

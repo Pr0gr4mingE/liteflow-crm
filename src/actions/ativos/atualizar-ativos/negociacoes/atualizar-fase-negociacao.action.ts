@@ -23,7 +23,7 @@ export async function atualizarFaseNegociacaoAction(
   };
 
   try {
-    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/pipeline-kanban`, {
+    const resposta = await fetch(`${process.env.API_URL}/pipeline-kanban`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payloadDaApi),

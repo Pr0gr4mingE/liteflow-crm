@@ -13,7 +13,7 @@ export async function deletarNegociacaoPfAction(id: string): Promise<IRespostaDT
     }
 
     const resposta = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/negociacao-pf?id=${id}`,
+      `${process.env.API_URL}/negociacao-pf?id=${id}`,
       {
         method: "DELETE",
         headers: { 

@@ -21,7 +21,7 @@ export async function atualizarUsuarioAction(dados: AtualizarUsuarioDTO): Promis
     }
 
     const resposta = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/usuario?id=${usuarioId}`,
+      `${process.env.API_URL}/usuario?id=${usuarioId}`,
       {
         method: "PATCH", // O mesmo verbo que configuramos na API
         headers: { "Content-Type": "application/json" },

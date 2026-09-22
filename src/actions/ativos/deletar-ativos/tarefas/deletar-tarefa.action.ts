@@ -13,7 +13,7 @@ export async function deletarTarefaAction(id: string): Promise<IRespostaDTO> {
     }
 
     const resposta = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/tarefa?id=${id}`,
+      `${process.env.API_URL}/tarefa?id=${id}`,
       {
         method: "DELETE",
         headers: { 

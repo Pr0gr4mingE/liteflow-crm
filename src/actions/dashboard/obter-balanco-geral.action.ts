@@ -24,7 +24,7 @@ export async function obterBalancoGeralAction(tipoFunil: "TODOS" | "PF" | "PJ" =
   }
 
   try {
-    const url = new URL(`${process.env.NEXT_PUBLIC_API_URL}/dashboard`);
+    const url = new URL(`${process.env.API_URL}/dashboard`);
     url.searchParams.append("tipo", tipoFunil);
     url.searchParams.append("usuarioId", usuarioId);
 

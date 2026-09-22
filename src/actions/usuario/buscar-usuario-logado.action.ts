@@ -18,7 +18,7 @@ export async function buscarUsuarioLogadoAction(): Promise<UsuarioPerfil | null>
     }
 
     const resposta = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/usuario?id=${usuarioId}`,
+      `${process.env.API_URL}/usuario?id=${usuarioId}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },

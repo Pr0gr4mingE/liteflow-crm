@@ -44,7 +44,7 @@ export async function criarTarefaAction(formData: FormData) {
   };
 
   try {
-    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/tarefa`, {
+    const resposta = await fetch(`${process.env.API_URL}/tarefa`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payloadDaApi),

@@ -12,7 +12,7 @@ export async function listarTarefasAction(): Promise<TarefaListagem[]> {
     if (!usuarioId) return [];
 
     const resposta = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/tarefa?usuarioId=${usuarioId}`,
+      `${process.env.API_URL}/tarefa?usuarioId=${usuarioId}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },

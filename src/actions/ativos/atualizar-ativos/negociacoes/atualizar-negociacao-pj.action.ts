@@ -4,7 +4,7 @@ import { NegociacaoPjFormdata } from "@/shared/types/ui/formdata/ativos/negociac
 
 export async function atualizarNegociacaoPjAction(id: string, dados: Partial<NegociacaoPjFormdata>) {
   try {
-    const resposta = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/negociacao-pj`, {
+    const resposta = await fetch(`${process.env.API_URL}/negociacao-pj`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id, ...dados }),
