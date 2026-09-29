@@ -1,8 +1,8 @@
 export const FASES_PF = [
   { id: "CAPTURA", titulo: "Captura", tailwindClass: "bg-slate-200", hexColor: "#94a3b8" },
   { id: "ENGAJAMENTO", titulo: "Engajamento", tailwindClass: "bg-blue-100", hexColor: "#60a5fa" },
+  { id: "QUALIFICACAO", titulo: "Qualificação", tailwindClass: "bg-amber-100", hexColor: "#fbbf24" },
   { id: "CONVERSAO", titulo: "Conversão", tailwindClass: "bg-green-100", hexColor: "#4ade80" },
-  { id: "FIDELIZACAO", titulo: "Fidelização", tailwindClass: "bg-purple-100", hexColor: "#c084fc" },
   { id: "DESISTENCIA", titulo: "Desistência", tailwindClass: "bg-red-100", hexColor: "#f87171" }
 ];
 

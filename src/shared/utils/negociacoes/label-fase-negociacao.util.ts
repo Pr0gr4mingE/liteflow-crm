@@ -4,8 +4,8 @@ import { FaseNegociacaoPj } from "@/shared/utils/types/fase-negociacao-pj.type";
 export const LABEL_FASE_NEGOCIACAO_PF: Record<FaseNegociacaoPf, string> = {
   CAPTURA: "Captura",
   ENGAJAMENTO: "Engajamento",
+  QUALIFICACAO: "Qualificação",
   CONVERSAO: "Conversão",
-  FIDELIZACAO: "Fidelização",
   DESISTENCIA: "Desistência",
 };
 

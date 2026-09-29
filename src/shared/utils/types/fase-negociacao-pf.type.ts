@@ -1,6 +1,6 @@
 export type FaseNegociacaoPf = 
-  | "CAPTURA"      // Topo de funil: Entrou na base (ex: assinou newsletter, criou conta)
-  | "ENGAJAMENTO"  // Meio de funil: Interagiu com automações de marketing, clicou em ofertas
-  | "CONVERSAO"    // Fundo de funil: A compra rápida aconteceu (Equivalente ao "Fechado")
-  | "FIDELIZACAO"  // Pós-venda: Cliente recorrente, alertas automáticos de recompra ativados
-  | "DESISTENCIA"; // Abandono (ex: largou o carrinho, deu opt-out, esfriou)
+  | "CAPTURA"       // 1. Topo (Espelha "LEAD")
+  | "ENGAJAMENTO"   // 2. Meio (Espelha "CONTATO")
+  | "QUALIFICACAO"  // 3. Negociação de Valores (Espelha "PROPOSTA")
+  | "CONVERSAO"     // 4. Ganho Realizado (Espelha "FECHADO")
+  | "DESISTENCIA";  // 5. Perda Realizada (Espelha "INDEFERIDO")
