@@ -3,13 +3,15 @@ import { RespostaTarefaDTO } from "../dto/resposta-tarefa.dto";
 import { ITarefaRepository } from "../repositories/ITarefa.repository";
 import { IClientePfRepository } from "@/modules/cliente-pf/repositories/ICliente-pf.repository";
 import { INegociacaoPfRepository } from "@/modules/negociacao-pf/repositories/INegociacao-pf.repository";
+import { INegociacaoPjRepository } from "@/modules/negociacao-pj/repositories/INegociacao-pj.repository";
 import { Tarefa } from "@/shared/types/domain/ativos/tarefas/ITarefa";
 
 export class CriarTarefaUseCase {
   constructor(
     private readonly tarefaRepository: ITarefaRepository,
     private readonly clienteRepository?: IClientePfRepository, 
-    private readonly negociacaoRepository?: INegociacaoPfRepository
+    private readonly negociacaoPfRepository?: INegociacaoPfRepository,
+    private readonly negociacaoPjRepository?: INegociacaoPjRepository,
   ) {}
 
   async execute(dados: CriarTarefaDTO): Promise<RespostaTarefaDTO> {
@@ -35,10 +37,18 @@ export class CriarTarefaUseCase {
         }
       }
 
-      if (dados.negociacaoId && this.negociacaoRepository) {
-        const negociacaoExiste = await this.negociacaoRepository.buscarPorId(dados.negociacaoId);
-        if (!negociacaoExiste) {
-          return { sucesso: false, mensagem: "A negociação informada não existe." };
+      // Validação usando as strings literais diretamente
+      if (dados.negociacaoId) {
+        if (dados.tipoNegociacao === "PJ" && this.negociacaoPjRepository) {
+          const negociacaoExiste = await this.negociacaoPjRepository.buscarPorId(dados.negociacaoId);
+          if (!negociacaoExiste) {
+            return { sucesso: false, mensagem: "A negociação informada não existe." };
+          }
+        } else if (dados.tipoNegociacao === "PF" && this.negociacaoPfRepository) {
+          const negociacaoExiste = await this.negociacaoPfRepository.buscarPorId(dados.negociacaoId);
+          if (!negociacaoExiste) {
+            return { sucesso: false, mensagem: "A negociação informada não existe." };
+          }
         }
       }
 
