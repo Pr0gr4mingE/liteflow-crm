@@ -24,4 +24,5 @@ export const tarefasTable = pgTable("tarefas", {
   
   dataCriacao: timestamp("data_criacao").defaultNow().notNull(),
   dataAtualizacao: timestamp("data_atualizacao").defaultNow().notNull(),
+  dataConclusao: timestamp("data_conclusao", { mode: "date" }),
 });

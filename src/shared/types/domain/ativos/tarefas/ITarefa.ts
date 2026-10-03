@@ -15,4 +15,5 @@ export interface Tarefa {
   dataVencimento: Date;
   dataCriacao: Date;
   dataAtualizacao: Date;
+  dataConclusao: Date | null;
 }

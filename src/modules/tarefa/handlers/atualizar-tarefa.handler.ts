@@ -10,7 +10,10 @@ export class AtualizarTarefaHandler {
       return { sucesso: true, mensagem: "Tarefa atualizada com sucesso." };
     } catch (error: unknown) {
       console.error("[AtualizarTarefaHandler] Erro na orquestração:", error);
-      return { sucesso: false, mensagem: "Erro na orquestração dos dados ao atualizar tarefa." };
+      return { 
+        sucesso: false,
+        mensagem: error instanceof Error ? error.message : "Erro na orquestração dos dados ao atualizar tarefa." 
+      };
     }
   }
 }

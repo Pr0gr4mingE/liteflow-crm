@@ -1,0 +1,1 @@
+ALTER TABLE "tarefas" ADD COLUMN "data_conclusao" timestamp;

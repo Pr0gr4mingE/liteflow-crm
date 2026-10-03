@@ -90,8 +90,16 @@ export class TarefaRepository implements ITarefaRepository {
       const nomeClienteFinal = clientePfNome || clientePjNome;
       const tituloNegociacaoFinal = negociacaoPfTitulo || negociacaoPjTitulo;
 
+      let tipoNegociacao = undefined;
+        if (negociacaoPfTitulo || clientePfNome) {
+          tipoNegociacao = "PF";
+        } else if (negociacaoPjTitulo || clientePjNome) {
+          tipoNegociacao = "PJ";
+        }
+
       return {
         ...tarefa,
+        tipoNegociacao,
         cliente: nomeClienteFinal ? { nome: nomeClienteFinal } : undefined,
         negociacao: tituloNegociacaoFinal ? { titulo: tituloNegociacaoFinal } : undefined,
       };
