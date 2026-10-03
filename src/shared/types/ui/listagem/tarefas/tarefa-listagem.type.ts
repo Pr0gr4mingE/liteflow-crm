@@ -2,8 +2,9 @@ import { Tarefa } from "@/shared/types/domain/ativos/tarefas/ITarefa"; // Ajuste
 
 export type TarefaListagem = Pick<
   Tarefa,
-  "id" | "titulo" | "descricao" | "tipo" | "status" | "dataVencimento" | "dataCriacao"
+  "id" | "titulo" | "descricao" | "tipo" | "status" | "dataVencimento" | "dataCriacao" | "dataConclusao"
 > & {
   cliente?: { nome: string };
   negociacao?: { titulo: string };
+  tipoNegociacao?: {tipo: "PF" | "PJ"}
 };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { CheckCircle2, Clock, Calendar, User, Briefcase, Pencil, Trash2 } from "lucide-react"; // Adicionado Trash2
+import { CheckCircle2, Check, Clock, Calendar, User, Briefcase, Pencil, Trash2 } from "lucide-react"; // Adicionado Trash2
 import { TarefaListagem } from "@/shared/types/ui/listagem/tarefas/tarefa-listagem.type";
 import { FiltroStatusTarefa } from "@/hooks/listagem/tarefas/use-tarefas.hook";
 import { formatarDataPtBr } from "@/shared/utils/formatacao/formatar-data-ptbr.util";
@@ -13,6 +13,7 @@ import { Tarefa } from "@/shared/types/domain/ativos/tarefas/ITarefa";
 
 import { useFeedback } from "@/shared/hooks/ui/use-feedback.hook";
 import { ToastFeedback } from "@/components/ui/feedback/toast-feedback";
+import { useAtualizarStatusTarefa } from "@/hooks/ativos/atualizar-tarefas/use-atualizar-status-tarefa.hook";
 
 interface TarefasListaProps {
   filtroStatus: FiltroStatusTarefa;
@@ -39,14 +40,18 @@ function SkeletonLista() {
 function CardTarefa({ 
   tarefa, 
   onEdit,
-  onDelete // Nova prop
+  onDelete,
+  onComplete,
+  isAtualizando
 }: { 
   tarefa: TarefaListagem;
   onEdit: () => void;
   onDelete: () => void;
+  onComplete: () => void;  // <-- PRECISA TER AQUI NA TIPAGEM
+  isAtualizando?: boolean; // <-- PRECISA TER AQUI NA TIPAGEM
 }) {
   const { label, classes } = EstiloTituloTipoTarefa(tarefa.tipo);
-
+  const tipoNegociacao = (tarefa as TarefaListagem).tipoNegociacao;
   return (
     <li className="rounded-lg border border-slate-200/60 bg-white p-4 shadow-sm transition-hover hover:border-blue-300">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -63,6 +68,13 @@ function CardTarefa({
             <span className={`inline-flex rounded-md border px-2 py-0.5 text-xs font-medium ${classes}`}>
               {label}
             </span>
+            {tipoNegociacao && (
+              <span className={`inline-flex rounded-md px-2 py-0.5 text-xs font-bold tracking-wide ${
+                tipoNegociacao.toString().toUpperCase() === 'PJ' ? 'bg-indigo-50 text-indigo-700' : 'bg-orange-50 text-orange-700'
+              }`}>
+                {tipoNegociacao.toString().toUpperCase() === 'PJ' ? 'B2B' : 'B2C'}
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col gap-1.5 text-sm text-slate-600 sm:flex-row sm:flex-wrap sm:gap-4">
@@ -94,7 +106,21 @@ function CardTarefa({
         </div>
 
         <div className="flex items-center gap-1 sm:gap-3 shrink-0">
-          <span className="hidden sm:inline text-xs text-slate-400">Criada em {formatarDataPtBr(tarefa.dataCriacao)}</span>
+          {tarefa.status !== "CONCLUIDA" && (
+            <button 
+              onClick={onComplete}
+              disabled={isAtualizando}
+              className="rounded-md p-1.5 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
+              title="Marcar como Concluída"
+            >
+              <Check className="h-4 w-4" strokeWidth={3} />
+            </button>
+          )}
+          <span className="hidden sm:inline text-xs text-slate-400">
+            {tarefa.status === "CONCLUIDA" && tarefa.dataConclusao
+              ? `Concluída em ${formatarDataPtBr(tarefa.dataConclusao)}`
+              : `Criada em ${formatarDataPtBr(tarefa.dataCriacao)}`}
+          </span>
           <button 
             onClick={onEdit}
             className="rounded-md p-1.5 text-slate-400 hover:bg-blue-50 hover:text-blue-600 transition-colors"
@@ -118,23 +144,34 @@ function CardTarefa({
 
 export function TarefasLista({ filtroStatus, tarefas, carregando, busca, onAtualizar }: TarefasListaProps) {
   const [tarefaEditando, setTarefaEditando] = useState<TarefaListagem | null>(null);
-  
-  // Novo estado para exclusão (apenas o ID)
   const [tarefaDeletandoId, setTarefaDeletandoId] = useState<string | null>(null);
   
   const { mensagem, mostrarSucesso } = useFeedback();
+  const { atualizarStatus, atualizandoId } = useAtualizarStatusTarefa();
 
-  function handleSucesso() {
+function handleSucesso() {
     setTarefaEditando(null);
     mostrarSucesso("Tarefa atualizada");
     onAtualizar();
   }
 
-  // Handler de sucesso para exclusão
   function handleSucessoDeletar() {
     setTarefaDeletandoId(null);
     mostrarSucesso("Tarefa excluída");
     onAtualizar();
+  }
+
+  async function handleConcluir(id: string) {
+    const resultado = await atualizarStatus(id, "CONCLUIDA");
+    
+    if (resultado.sucesso) {
+      mostrarSucesso(resultado.mensagem || "Tarefa concluída!");
+      onAtualizar(); 
+    } else {
+      // Como não há 'mostrarErro' no seu hook, usamos o alert nativo do navegador para não perder o aviso
+      alert(resultado.mensagem || "Erro ao concluir a tarefa.");
+      console.error("[TarefasLista] Erro ao concluir:", resultado.mensagem);
+    }
   }
 
   if (carregando) {
@@ -169,6 +206,8 @@ export function TarefasLista({ filtroStatus, tarefas, carregando, busca, onAtual
               tarefa={tarefa} 
               onEdit={() => setTarefaEditando(tarefa)}
               onDelete={() => setTarefaDeletandoId(tarefa.id)} // Nova prop acoplada
+              onComplete={() => handleConcluir(tarefa.id)}
+              isAtualizando={atualizandoId === tarefa.id}
             />
           ))}
         </ul>

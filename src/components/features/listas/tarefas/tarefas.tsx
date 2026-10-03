@@ -1,11 +1,9 @@
 "use client";
 
-import Link from "next/link";
-import { Plus, Search, RefreshCw } from "lucide-react";
+import { Search, RefreshCw } from "lucide-react";
 import { useTarefas } from "@/hooks/listagem/tarefas/use-tarefas.hook";
 import { TarefasLista } from "./tarefas-lista";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 export function TarefasFeature() {
   const {
@@ -55,13 +53,6 @@ export function TarefasFeature() {
               Concluídas
             </button>
           </div>
-
-          <Link href="/ativos">
-            <Button type="button" className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nova tarefa
-            </Button>
-          </Link>
         </div>
       </div>
 
