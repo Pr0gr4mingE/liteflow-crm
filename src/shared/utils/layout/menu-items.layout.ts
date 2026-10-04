@@ -1,6 +1,7 @@
 import { 
   LayoutDashboard, KanbanSquare, Users, Briefcase, 
-  CheckSquare, PackagePlus, UserCircle 
+  CheckSquare, PackagePlus, UserCircle, 
+  House,
 } from "lucide-react";
 
 export const MENU_ITEMS = [
@@ -11,4 +12,5 @@ export const MENU_ITEMS = [
   { nome: "Tarefas", href: "/tarefas", icone: CheckSquare },
   { nome: "Cadastro de Ativos", href: "/ativos", icone: PackagePlus },
   { nome: "Perfil", href: "/perfil", icone: UserCircle },
+  { nome: "Página Inicial", href: "/", icone: House},
 ];
