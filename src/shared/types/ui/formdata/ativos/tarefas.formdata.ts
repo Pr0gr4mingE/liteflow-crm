@@ -1,4 +1,11 @@
 import { Tarefa } from "@/shared/types/domain/ativos/tarefas/ITarefa";
 
-export type CriarTarefaFormData = Omit<Tarefa,"usuarioResponsavelId" | "id" | "dataCriacao" | "dataAtualizacao">
-  
+export type CriarTarefaFormData = Pick<Tarefa,
+  | "titulo"
+  | "tipo"
+  | "status"
+  | "descricao"
+  | "dataVencimento"
+  | "clienteId"
+  | "negociacaoId"
+>;

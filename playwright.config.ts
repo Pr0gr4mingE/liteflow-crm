@@ -76,4 +76,13 @@ export default defineConfig({
   //   url: 'http://localhost:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
+
+  webServer: {
+    // Comando para subir o Next.js no ambiente de CI
+    command: 'npm run build && npm run start', 
+    url: 'http://localhost:3000',
+    reuseExistingServer: !process.env.CI,
+    // Dá um tempo a mais pro build rodar antes de iniciar os testes (120 segundos)
+    timeout: 120 * 1000, 
+  },
 });

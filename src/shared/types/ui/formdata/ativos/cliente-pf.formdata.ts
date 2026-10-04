@@ -1,3 +1,8 @@
 import {ClientePf} from "@/shared/types/domain/ativos/clientes/ICliente-pf"
 
-export type ClientePfFormdata = Omit<ClientePf, "id"|"usuarioResponsavelId"|"dataCriacao"|"dataAtualizacao">
+export type ClientePfFormdata = Pick<ClientePf,
+  | "cpf"
+  | "nome"
+  | "email"
+  | "telefone"
+>;
