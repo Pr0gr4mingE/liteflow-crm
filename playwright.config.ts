@@ -83,6 +83,10 @@ export default defineConfig({
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     // Dá um tempo a mais pro build rodar antes de iniciar os testes (120 segundos)
-    timeout: 120 * 1000, 
+    timeout: 120 * 1000,
+  
+  env: {
+      API_URL: 'http://localhost:3000',
+  },
   },
 });
