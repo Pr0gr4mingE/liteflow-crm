@@ -1,9 +1,10 @@
 "use client";
 
 import { Sidebar } from "@/components/layout/sidebar";
-import { Header } from "@/components/layout/header";
+import { HeaderFeature } from "@/components/features/layout/header-feature";
 import { Footer } from "@/components/layout/footer";
 import { useLayoutMenu } from "@/shared/hooks/layout/use-layout-menu.hook";
+
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { menuAberto, alternarMenu, fecharMenu } = useLayoutMenu();
@@ -22,7 +23,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       
       <div className="flex-1 flex flex-col w-full h-full min-w-0">
         {/* Passando o nomeUsuario aqui para o hook de iniciais funcionar */}
-        <Header aoClicarMenu={alternarMenu} nomeUsuario="Pedro" />
+        <HeaderFeature aoClicarMenu={alternarMenu} />
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-6">
           {children}
         </main>

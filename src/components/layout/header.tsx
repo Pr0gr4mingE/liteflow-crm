@@ -10,6 +10,7 @@ import { TipoEntidadeBusca } from "@/shared/utils/types/tipo-entidade-busca.util
 
 interface HeaderAtualizadoProps extends HeaderProps {
   nomeUsuario?: string;
+  iniciais: string;
 }
 
 export function Header({ aoClicarMenu, nomeUsuario }: HeaderAtualizadoProps) {
