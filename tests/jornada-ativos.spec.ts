@@ -1,4 +1,35 @@
 import { test, expect } from "@playwright/test";
+function gerarCnpjValido() {
+  const random = (n: number) => Math.floor(Math.random() * n);
+  const n1 = random(9), n2 = random(9), n3 = random(9), n4 = random(9), n5 = random(9), n6 = random(9), n7 = random(9), n8 = random(9);
+  const n9 = 0, n10 = 0, n11 = 0, n12 = 1; // Sufixo padrão de matriz
+  
+  let d1 = n12 * 2 + n11 * 3 + n10 * 4 + n9 * 5 + n8 * 6 + n7 * 7 + n6 * 8 + n5 * 9 + n4 * 2 + n3 * 3 + n2 * 4 + n1 * 5;
+  d1 = 11 - (d1 % 11);
+  if (d1 >= 10) d1 = 0;
+  
+  let d2 = d1 * 2 + n12 * 3 + n11 * 4 + n10 * 5 + n9 * 6 + n8 * 7 + n7 * 8 + n6 * 9 + n5 * 2 + n4 * 3 + n3 * 4 + n2 * 5 + n1 * 6;
+  d2 = 11 - (d2 % 11);
+  if (d2 >= 10) d2 = 0;
+  
+  return `${n1}${n2}${n3}${n4}${n5}${n6}${n7}${n8}${n9}${n10}${n11}${n12}${d1}${d2}`;
+}
+
+function gerarCpfValido() {
+  const random = (n: number) => Math.floor(Math.random() * n);
+  const n = 9;
+  const n1 = random(n), n2 = random(n), n3 = random(n), n4 = random(n), n5 = random(n), n6 = random(n), n7 = random(n), n8 = random(n), n9 = random(n);
+  
+  let d1 = n9 * 2 + n8 * 3 + n7 * 4 + n6 * 5 + n5 * 6 + n4 * 7 + n3 * 8 + n2 * 9 + n1 * 10;
+  d1 = 11 - (d1 % 11);
+  if (d1 >= 10) d1 = 0;
+  
+  let d2 = d1 * 2 + n9 * 3 + n8 * 4 + n7 * 5 + n6 * 6 + n5 * 7 + n4 * 8 + n3 * 9 + n2 * 10 + n1 * 11;
+  d2 = 11 - (d2 % 11);
+  if (d2 >= 10) d2 = 0;
+  
+  return `${n1}${n2}${n3}${n4}${n5}${n6}${n7}${n8}${n9}${d1}${d2}`;
+}
 
 test.describe.configure({ mode: 'serial' });
 
@@ -12,7 +43,7 @@ test.describe("E2E: Jornada de Cadastro de Ativos (Clientes e Negociações)", (
     await page.goto("http://localhost:3000/login-usuario");
     
     // 🚨 ATENÇÃO: Substitua pelo e-mail e senha de um usuário que JÁ EXISTE no seu banco local!
-    await page.getByLabel("E-mail", { exact: true }).fill("paredes010@gmail.com");
+    await page.getByLabel("E-mail", { exact: true }).fill("demo@gmail.com");
     await page.getByLabel("Senha", { exact: true }).fill("Senhas12345");
     
     await page.getByRole("button", { name: "Entrar na plataforma" }).click();
@@ -29,7 +60,8 @@ test.describe("E2E: Jornada de Cadastro de Ativos (Clientes e Negociações)", (
     const sufixoUnico = Date.now().toString().slice(-5);
 
     await page.getByLabel("Nome Completo *").fill(`Bruce Wayne ${sufixoUnico}`);
-    await page.getByLabel("CPF *").fill(`1234561${sufixoUnico.slice(0,4)}`);
+    const cpfGerado = gerarCpfValido();
+await page.getByLabel("CPF").fill(cpfGerado);
     await page.getByLabel("Telefone *").fill("11999999999");
     await page.getByLabel("E-mail *").fill(`bruce${sufixoUnico}@wayne.com`);
 
@@ -61,7 +93,8 @@ test.describe("E2E: Jornada de Cadastro de Ativos (Clientes e Negociações)", (
     
     await page.getByLabel("Razão Social *").fill(empresaCriadaNome);
     await page.getByLabel("Nome Fantasia *").fill("Wayne Tech");
-    await page.getByLabel("CNPJ *").fill(`123456780001${sufixoUnico.slice(0,2)}`);
+    const cnpjGerado = gerarCnpjValido();
+    await page.getByLabel("CNPJ").fill(cnpjGerado);
     await page.getByLabel("Segmento *").selectOption({ value: "TECNOLOGIA" });
     await page.getByLabel("Telefone Corporativo *").fill("11999999999");
     await page.getByLabel("E-mail Corporativo *").fill(`contato${sufixoUnico}@wayne.com`);

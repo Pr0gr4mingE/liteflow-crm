@@ -12,6 +12,9 @@ const config: Config = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1', // Entende os seus imports com "@/"
   },
+  testMatch: [
+    "**/?(*.)+(test).[jt]s?(x)"
+  ],
 };
 
 export default createJestConfig(config);
