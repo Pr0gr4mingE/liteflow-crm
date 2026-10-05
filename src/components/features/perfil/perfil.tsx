@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { User, Mail, FileText, Briefcase, Check, X, Edit2 } from "lucide-react";
+import { User, Mail, FileText, Briefcase, Check, X, Edit2, Trash2, AlertTriangle } from "lucide-react";
 import { usePerfil } from "@/hooks/usuario/use-perfil.hook";
+import { useDeletarConta } from "@/hooks/usuario/use-deletar-usuario.hook";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AtualizarUsuarioDTO } from "@/modules/usuario/dto/atualizar-usuario.dto";
@@ -23,6 +24,7 @@ function SkeletonPerfil() {
 
 export function PerfilFeature() {
   const { usuario, carregando, salvando, erro, mensagemSucesso, atualizarPerfil } = usePerfil();
+  const { deletarConta, deletando } = useDeletarConta(); // <-- Hook em ação
   
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<AtualizarUsuarioDTO>({});
@@ -44,7 +46,6 @@ export function PerfilFeature() {
   }
 
   const handleEdit = () => {
-    // Preenche o formulário com os dados atuais ao entrar no modo edição
     setFormData({
       nome: usuario.nome,
       email: usuario.email,
@@ -61,13 +62,11 @@ export function PerfilFeature() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Filtra apenas o que realmente mudou para enviar à API (afinal, o PATCH é parcial)
     const mudancas: AtualizarUsuarioDTO = {};
     if (formData.nome !== usuario.nome) mudancas.nome = formData.nome;
     if (formData.email !== usuario.email) mudancas.email = formData.email;
     if (formData.cpf !== usuario.cpf) mudancas.cpf = formData.cpf;
 
-    // Se não houver mudanças, só fecha a edição
     if (Object.keys(mudancas).length === 0) {
       setIsEditing(false);
       return;
@@ -79,8 +78,19 @@ export function PerfilFeature() {
     }
   };
 
+  const handleDeleteAccount = async () => {
+    const confirmacao = window.confirm(
+      "Aviso Crítico: Esta ação apagará permanentemente sua conta, clientes, negociações e tarefas. Esta ação não pode ser desfeita. Deseja continuar?"
+    );
+
+    // O try/catch e o state de loading agora são responsabilidade exclusiva do Hook
+    if (confirmacao && usuario) {
+      await deletarConta(usuario.id); 
+    }
+  };
+
   return (
-    <div className="flex h-full flex-col max-w-4xl">
+    <div className="flex h-full flex-col max-w-4xl pb-10">
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-slate-900">Meu Perfil</h1>
         <p className="text-sm text-slate-500">
@@ -100,6 +110,7 @@ export function PerfilFeature() {
         </div>
       )}
 
+      {/* Card de Dados Pessoais */}
       <div className="rounded-xl border border-slate-200 bg-white shadow-sm">
         <div className="border-b border-slate-200 p-6 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-slate-800">Dados Pessoais</h2>
@@ -172,7 +183,7 @@ export function PerfilFeature() {
 
             </div>
 
-            {/* Ações do Formulário (Só aparece no modo edição) */}
+            {/* Ações do Formulário */}
             {isEditing && (
               <div className="flex justify-end gap-3 pt-4 border-t border-slate-100">
                 <Button 
@@ -202,6 +213,31 @@ export function PerfilFeature() {
           </form>
         </div>
       </div>
+
+      {/* Zona de Perigo (Exclusão de Conta) */}
+      <div className="mt-8 rounded-xl border border-red-200 bg-red-50/50 shadow-sm">
+        <div className="border-b border-red-200 p-6 flex items-center gap-3">
+          <AlertTriangle className="h-5 w-5 text-red-600" />
+          <h2 className="text-lg font-semibold text-red-800">Zona de Perigo</h2>
+        </div>
+        <div className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <h3 className="font-medium text-slate-900">Excluir Conta Permanentemente</h3>
+            <p className="text-sm text-slate-600 mt-1 max-w-xl">
+              Ao excluir sua conta, todos os seus dados, clientes, negociações e tarefas serão removidos permanentemente. Esta ação não pode ser desfeita.
+            </p>
+          </div>
+          <Button
+            onClick={handleDeleteAccount}
+            disabled={deletando || isEditing}
+            className="bg-red-600 hover:bg-red-700 text-white gap-2 shrink-0 shadow-sm"
+          >
+            <Trash2 className="h-4 w-4" />
+            {deletando ? "Excluindo dados..." : "Excluir minha conta"}
+          </Button>
+        </div>
+      </div>
+
     </div>
   );
 }
