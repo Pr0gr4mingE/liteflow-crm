@@ -6,8 +6,11 @@ import { AtualizarUsuarioDTO } from "../dto/atualizar-usuario.dto";
 export interface IUsuarioRepository {
   salvar(dados: CriarUsuarioDTO): Promise<Usuario>;
   
-  // NOVO: Atualização
+  // Atualização
   atualizar(id: string, dados: AtualizarUsuarioDTO): Promise<Usuario>;
+
+  // Deleção
+  deletarComAtivos(id: string): Promise<void>;
 
   // Buscas Únicas
   buscarPorId(id: string): Promise<Usuario | null>;

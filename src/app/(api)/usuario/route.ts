@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { makeCriarUsuarioHandler } from "@/modules/usuario/factories/criar-usuario.factory";
 import { makeBuscarUsuarioPorIdHandler } from "@/modules/usuario/factories/buscar-usuario.factory";
 import { makeAtualizarUsuarioHandler } from "@/modules/usuario/factories/atualizar-usuario.factory";
+import { makeDeletarContaHandler } from "@/modules/usuario/factories/deletar-usuario.factory";
 
 export async function POST(req: NextRequest) {
   try {
@@ -83,6 +84,37 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json(resposta, { status: 200 });
   } catch (error) {
     console.error("[API Usuario PATCH] Erro não tratado:", error);
+    return NextResponse.json(
+      { sucesso: false, mensagem: "Erro interno no servidor." },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get("id");
+    
+    console.log("3. [API] Rota DELETE atingida. ID extraído da URL:", id);
+
+    if (!id) {
+      return NextResponse.json(
+        { sucesso: false, mensagem: "ID não fornecido para exclusão." },
+        { status: 400 }
+      );
+    }
+
+    const handler = makeDeletarContaHandler();
+    const resposta = await handler.handle(id);
+
+    console.log("3.1 [API] Resposta gerada pelo Handler:", resposta);
+
+    // Agora usa o mesmo padrão ternário do resto do seu sistema!
+    return NextResponse.json(resposta, { status: resposta.sucesso ? 200 : 400 });
+    
+  } catch (error) {
+    console.error("3.X [API] Erro não tratado:", error);
     return NextResponse.json(
       { sucesso: false, mensagem: "Erro interno no servidor." },
       { status: 500 }
