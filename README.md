@@ -39,7 +39,11 @@ O projeto adota uma estrutura de pastas orientada a domínio e responsabilidade.
 │   ├── components/     # Componentes React (separados entre 'ui' genérica e 'features' complexas)
 │   ├── hooks/          # Hooks customizados (mutações, controle de UI, listagens)
 │   ├── infrastructure/ # Configurações de banco (Drizzle), adaptadores e clientes externos
-│   ├── modules/        # Regras de negócio centrais, serviços isolados e lógica de domínio
+│   ├── modules/        # Clean Architecture do Backend separado por domínio (Usuários, Tarefas, Negociações)
+│   │   ├── /handlers   # Controladores padronizados que recebem a requisição, sanitizam e invocam o Use Case
+│   │   ├── /use-cases  # Regras de negócio puras da aplicação
+│   │   ├── /repositor. # Contratos (Interfaces) e implementação direta com o Drizzle ORM
+│   │   └── /factories  # Injeção de dependência para montar a cadeia de execução
 │   └── shared/         # Tipos globais, DTOs, utilitários puros e constantes compartilhadas
 │
 └── tests/              # Suíte nativa do Playwright (Testes E2E isolados do src/)
@@ -84,13 +88,14 @@ npm run test:e2e:ui   # Abre a interface gráfica interativa do Playwright
 O projeto exige configurações de ambiente para rodar. Crie um arquivo `.env` na raiz do projeto, baseado no modelo abaixo:
 
 ```env
-# URL da API de Backend (se houver comunicação externa)
-NEXT_PUBLIC_API_URL="http://localhost:3000/api"
+# URL da API de Backend (Usada pelas Server Actions no servidor)
+# Recomendado usar 127.0.0.1 localmente para evitar problemas de resolução IPv6 no Node.js
+API_URL="http://127.0.0.1:3000/api"
 
 # Conexão com o Banco de Dados (usada pelo Drizzle / PostgreSQL)
 DATABASE_URL="postgresql://usuario:senha@host:porta/banco"
-```
 
+```
 > **Aviso de Segurança:** Nunca versione o arquivo `.env`. Nenhuma variável crítica (como banco de dados ou tokens de acesso) deve possuir o prefixo `NEXT_PUBLIC_`.
 
 ---
@@ -123,3 +128,6 @@ O sistema estará disponível em http://localhost:3000.
 - [x] Selects de entidades pesadas (Clientes/Empresas) migraram para Autocompletes baseados em dropdown, gerando melhor UX.
 - [x] Testes E2E mapeiam o DOM exato sem dependências genéricas, focando em rótulos acessíveis.
 - [x] Erros capturados em blocos `try/catch` são estritamente tipados como `unknown`, exigindo verificação prévia.
+- [x] **Exclusão em Cascata Transacional:** Mutações destrutivas complexas (ex: deleção de conta) utilizam transações ACID no Drizzle, garantindo que Tarefas, Negociações e Clientes vinculados sejam apagados sem gerar dados órfãos.
+- [x] **Padronização de API (IRespostaDTO):** Todas as rotas de backend devolvem respostas uniformes mapeando códigos HTTP corretos de volta para as Server Actions.
+- [x] **Sanitização de DTOs e Tipagem Estrita:** Handlers de edição realizam interceptação e reidratação de dados (como objetos `Date` transformados em strings via JSON) garantindo a integridade dos contratos de dados na API.
