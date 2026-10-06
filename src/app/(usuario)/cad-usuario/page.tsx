@@ -27,7 +27,7 @@ export default function CadUsuarioPage() {
 
       <div className="mt-6 text-center text-sm text-slate-600">
         Já tem uma conta?{" "}
-        <Link href="/login" className="font-medium text-blue-600 hover:underline">
+        <Link href="/login-usuario" className="font-medium text-blue-600 hover:underline">
           Faça login
         </Link>
       </div>
