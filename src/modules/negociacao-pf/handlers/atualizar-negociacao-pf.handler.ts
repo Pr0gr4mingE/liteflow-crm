@@ -1,11 +1,17 @@
 import { CriarNegociacaoPfDTO } from "../dto/criar-negociacao-pf.dto";
 import { AtualizarNegociacaoPfUseCase } from "../use-cases/atualizar-negociacao-pf.use-case";
+import { rehidratarData } from "@/shared/utils/formatacao/rehidratar-data.util";
 
 export class AtualizarNegociacaoPfHandler {
   constructor(private readonly atualizarNegociacaoPfUseCase: AtualizarNegociacaoPfUseCase) {}
 
   async handle(id: string, dadosEntrada: Partial<CriarNegociacaoPfDTO>) {
     try {
+      // Rehidrata a previsão de fechamento
+      if (dadosEntrada.dataPrevisaoFechamento) {
+        dadosEntrada.dataPrevisaoFechamento = rehidratarData(dadosEntrada.dataPrevisaoFechamento as unknown as string) as Date;
+      }
+
       await this.atualizarNegociacaoPfUseCase.executar(id, dadosEntrada);
       return { sucesso: true, mensagem: "Negociação PF atualizada com sucesso." };
     } catch (error: unknown) {

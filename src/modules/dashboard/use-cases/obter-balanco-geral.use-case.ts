@@ -1,6 +1,7 @@
 import { ObterBalancoGeralDTO } from "../dto/obter-balanco-geral.dto";
 import { BalancoGeralResponse } from "@/shared/types/ui/dashboard/balanco-geral-response.type"; 
 import { IDashboardRepository } from "../repositories/IDashboard.repository"; 
+import { rehidratarData } from "@/shared/utils/formatacao/rehidratar-data.util";
 
 export class ObterBalancoGeralUseCase {
   constructor(private readonly dashboardRepository: IDashboardRepository) {}
@@ -12,6 +13,7 @@ export class ObterBalancoGeralUseCase {
     const funilBruto = await this.dashboardRepository.obterAgrupamentoPorFase(dados.usuarioId, dados.tipo);
     const negociacoesProximas = await this.dashboardRepository.obterNegociacoesProximasAoFechamento(dados.usuarioId, dados.tipo, 5); 
     const tarefasBrutas = await this.dashboardRepository.obterTarefasPendentes(dados.usuarioId, dados.tipo, 5);
+
 
     return {
       kpis: {
@@ -25,18 +27,31 @@ export class ObterBalancoGeralUseCase {
         quantidade: item.quantidade,
         valorTotal: item.valorTotal,
       })),
-      tarefasProximas: tarefasBrutas.map((tarefa) => ({
-        id: tarefa.id,
-        titulo: tarefa.titulo,
-        dataVencimento: new Date(tarefa.dataVencimento).toISOString(),
-        atrasada: new Date(tarefa.dataVencimento) < dataAtual,
-      })),
-      negociacoesProximas: negociacoesProximas.map((negociacao) => ({
+      tarefasProximas: tarefasBrutas.map((tarefa) => {
+        // 1. Bloco de código normal: declara a variável aqui
+        const dataRehidratada = rehidratarData(tarefa.dataVencimento);
+        
+        // 2. Retorna o objeto explicitamente
+        return {
+          id: tarefa.id,
+          titulo: tarefa.titulo,
+          dataVencimento: dataRehidratada?.toISOString() || "",
+          // Aproveite para usar a data segura aqui também
+          atrasada: dataRehidratada ? dataRehidratada < dataAtual : false, 
+      };
+        }),
+    negociacoesProximas: negociacoesProximas.map((negociacao) => {
+      // 1. Declara a variável usando a sua função utilitária
+      const dataRehidratada = rehidratarData(negociacao.dataPrevisaoFechamento);
+
+      // 2. Retorna o objeto formatado
+      return {
         id: negociacao.id,
         titulo: negociacao.titulo,
         valor: negociacao.valor,
-        dataPrevisaoFechamento: new Date(negociacao.dataPrevisaoFechamento).toISOString(),
-      })),
+        dataPrevisaoFechamento: dataRehidratada?.toISOString() || "", // Fallback seguro
+    };
+      }),
     };
   }
 }

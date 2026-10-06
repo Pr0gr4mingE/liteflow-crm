@@ -4,6 +4,7 @@ import { useEffect } from "react";
 // Import corrigido
 import { useAtualizarNegociacaoPf } from "@/hooks/ativos/atualizar-negociacoes/use-atualizar-negociacao-pf.hook";
 import { NegociacaoPf } from "@/shared/types/domain/ativos/negociacoes/INegociacao-pf";
+import { rehidratarData } from "@/shared/utils/formatacao/rehidratar-data.util";
 
 export interface EditarNegociacaoPfFormProps {
   negociacaoAtual: NegociacaoPf;
@@ -32,9 +33,8 @@ export function EditarNegociacaoPfForm({
     }
   }
 
-  const dataPrevisaoStr = negociacaoAtual.dataPrevisaoFechamento 
-    ? new Date(negociacaoAtual.dataPrevisaoFechamento).toISOString().split("T")[0]
-    : "";
+  const previsaoRehidratada = rehidratarData(negociacaoAtual.dataPrevisaoFechamento);
+  const dataPrevisaoStr = previsaoRehidratada ? previsaoRehidratada.toISOString().split("T")[0] : "";
 
   return (
     <form id={`form-editar-negociacao-pf-${negociacaoAtual.id}`} onSubmit={onSubmit} className="flex flex-col gap-4">

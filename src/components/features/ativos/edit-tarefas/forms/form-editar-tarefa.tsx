@@ -4,6 +4,7 @@ import { useEffect } from "react";
 // Import corrigido com base na nova estrutura de pastas
 import { useAtualizarTarefa } from "@/hooks/ativos/atualizar-tarefas/use-atualizar-tarefa.hook";
 import { Tarefa } from "@/shared/types/domain/ativos/tarefas/ITarefa";
+import { rehidratarData } from "@/shared/utils/formatacao/rehidratar-data.util";
 
 export interface EditarTarefaFormProps {
   tarefaAtual: Tarefa;
@@ -34,9 +35,8 @@ export function EditarTarefaForm({
     }
   }
 
-  const dataVencimentoStr = tarefaAtual.dataVencimento 
-    ? new Date(tarefaAtual.dataVencimento).toISOString().split("T")[0]
-    : "";
+  const vencimentoRehidratado = rehidratarData(tarefaAtual.dataVencimento);
+const dataVencimentoStr = vencimentoRehidratado ? vencimentoRehidratado.toISOString().split("T")[0] : "";
 
   return (
     <form id={`form-editar-tarefa-${tarefaAtual.id}`} onSubmit={onSubmit} className="flex flex-col gap-4">
