@@ -85,8 +85,8 @@ export function FormNegociacaoPf() {
           <select id="fase" name="fase" required className="border p-2 rounded bg-white">
             <option value="CAPTURA">Captura</option>
             <option value="ENGAJAMENTO">Engajamento</option>
+            <option value="QUALIFICACAO">Qualificação</option>
             <option value="CONVERSAO">Conversão</option>
-            <option value="FIDELIZACAO">Fidelização</option>
             <option value="DESISTENCIA">Desistência</option>
           </select>
         </div>
