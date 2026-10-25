@@ -34,7 +34,8 @@ export function BarraBusca() {
 
   return (
     <div className="flex-1 flex justify-center w-full max-w-lg relative" ref={dropdownRef}>
-      <div className="flex items-center bg-slate-100 rounded-lg px-3 py-2 w-full focus-within:ring-2 focus-within:ring-blue-100 transition-all hidden sm:flex">
+      {/* Removido o 'hidden sm:flex' no final desta linha 👇 */}
+      <div className="flex items-center bg-slate-100 rounded-lg px-3 py-2 w-full focus-within:ring-2 focus-within:ring-blue-100 transition-all">
         <Search size={18} className="text-slate-400 shrink-0" />
         <input 
           type="text" 
