@@ -10,7 +10,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     // 2. Variantes de Cor
     const variants = {
       primary: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
-      outline: "border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-blue-500",
+      outline: "border border-gray-500 text-gray-700 bg-white hover:bg-gray-50 focus:ring-blue-500",
+      outlineBlue: "border border-blue-500 text-gray-700 bg-white hover:bg-gray-50 focus:ring-blue-500",
       ghost: "text-gray-700 hover:bg-gray-100 focus:ring-gray-500",
     };
 
@@ -19,7 +20,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       default: "h-11 md:h-10 px-4 min-w-[120px] text-base md:text-sm", 
       sm: "h-9 px-3 text-xs min-w-0", 
       lg: "h-12 md:h-14 px-8 text-lg", 
-      icon: "h-10 w-10 p-2", 
+      icon: "h-10 w-10 p-2",
     };
 
     return (

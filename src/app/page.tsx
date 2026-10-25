@@ -43,6 +43,13 @@ export default function LandingPage() {
                 Criar conta
               </Button>
             </Link>
+
+            {/* 2. Botão de acesso a pagina vitrine joomla5 */}
+            <Link href="https://funfa.ct.ws/" className="w-full sm:w-auto">
+              <Button variant="outlineBlue" size="lg" className="w-full sm:w-auto">
+                Saiba mais
+              </Button>
+            </Link>
             
           </div>
         </section>
