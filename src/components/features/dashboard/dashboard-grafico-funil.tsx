@@ -27,9 +27,10 @@ export function GraficoFunil({ dados }: GraficoFunilProps) {
   const maiorValor = Math.max(...dados.map((d) => d.valorTotal), 1);
 
   return (
-    <div className="h-72 w-full pt-4 pb-2 flex flex-col justify-end">
-      {/* Container principal das colunas com espaçamento e alinhamento à base */}
-      <div className="flex h-56 items-end justify-around gap-3 px-2 border-b border-slate-100 pb-3">
+    // Adicionado overflow-x-auto na div principal
+    <div className="h-72 w-full pt-4 pb-2 flex flex-col justify-end overflow-x-auto hide-scrollbar">
+      {/* Adicionado min-w-[500px] e justificado no início (start) no mobile */}
+      <div className="flex h-56 items-end justify-start sm:justify-around gap-6 sm:gap-3 px-4 sm:px-2 border-b border-slate-100 pb-3 min-w-[500px] sm:min-w-0">
         {dados.map((item, index) => {
           // Mantém uma altura proporcional, mas limita o crescimento excessivo e garante visibilidade mínima
           const alturaPercentual = Math.max((item.valorTotal / maiorValor) * 100, 6);

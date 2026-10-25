@@ -14,10 +14,10 @@ export function CadastroClientesFeature() {
         <h2 className="text-xl font-semibold text-gray-800">
           Cadastrar Novo Cliente
         </h2>
-        <div className="flex bg-gray-200 p-1 rounded">
+        <div className="flex w-full sm:w-max bg-gray-200 p-1 rounded">
           <button
             onClick={() => setTipoPessoa("PF")}
-            className={`px-4 py-1 rounded text-sm transition-colors ${
+            className={`flex-1 sm:flex-none px-2 py-1 sm:px-4 sm:py-1 rounded text-xs sm:text-sm transition-colors ${
               tipoPessoa === "PF" ? "bg-white shadow font-medium text-blue-600" : "text-gray-600 hover:bg-gray-300"
             }`}
           >
@@ -25,7 +25,7 @@ export function CadastroClientesFeature() {
           </button>
           <button
             onClick={() => setTipoPessoa("PJ")}
-            className={`px-4 py-1 rounded text-sm transition-colors ${
+            className={`flex-1 sm:flex-none px-2 py-1 sm:px-4 sm:py-1 rounded text-xs sm:text-sm transition-colors ${
               tipoPessoa === "PJ" ? "bg-white shadow font-medium text-blue-600" : "text-gray-600 hover:bg-gray-300"
             }`}
           >

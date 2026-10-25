@@ -31,11 +31,13 @@ export function NegociacoesFeature() {
         </div>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-          <div className="flex w-max items-center gap-2 rounded-lg bg-slate-100 p-1">
+          {/* Adicionado w-full no mobile */}
+          <div className="flex w-full sm:w-max items-center gap-1 sm:gap-2 rounded-lg bg-slate-100 p-1">
+            {/* Adicionado flex-1 e text-xs no mobile */}
             <button
               type="button"
               onClick={() => setTipoNegociacao("PF")}
-              className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+              className={`flex-1 sm:flex-none rounded-md px-2 py-2 sm:px-4 text-xs sm:text-sm font-medium transition-colors ${
                 tipoNegociacao === "PF"
                   ? "bg-white text-slate-900 shadow-sm"
                   : "text-slate-500 hover:text-slate-700"

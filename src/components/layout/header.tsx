@@ -6,7 +6,7 @@ import { BarraBusca } from "@/components/features/layout/barra-pesquisa"; // Aju
 
 export function Header({ aoClicarMenu }: HeaderProps) {
   return (
-    <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shrink-0 gap-4 z-50">
+    <header className="sticky top-0 h-16 bg-white border-b border-slate-200 flex items-center justify-between px-4 md:px-6 shrink-0 gap-4 z-50">
       
       {/* Esquerda: Menu Mobile (Ocupa 1 fração do espaço) */}
       <div className="flex items-center flex-1">

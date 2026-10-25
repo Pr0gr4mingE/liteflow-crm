@@ -64,10 +64,11 @@ export function PipelineFeature() {
           </p>
         </div>
         
-        <div className="flex w-max items-center gap-2 rounded-lg bg-slate-100 p-1">
+        {/* flex-1 para dividir 50/50 no mobile, texto menor no mobile */}
+        <div className="flex w-full sm:w-max items-center gap-1 sm:gap-2 rounded-lg bg-slate-100 p-1">
           <button 
-            onClick={() => setTipoFunil("PF")} 
-            className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            onClick={() => setTipoFunil("PF")}
+            className={`flex-1 sm:flex-none rounded-md px-2 py-2 sm:px-4 text-xs sm:text-sm font-medium transition-colors ${
               tipoFunil === "PF" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
             }`}
           >
@@ -75,7 +76,7 @@ export function PipelineFeature() {
           </button>
           <button 
             onClick={() => setTipoFunil("PJ")} 
-            className={`rounded-md px-4 py-2 text-sm font-medium transition-colors ${
+            className={`flex-1 sm:flex-none rounded-md px-2 py-2 sm:px-4 text-xs sm:text-sm font-medium transition-colors ${
               tipoFunil === "PJ" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
             }`}
           >
@@ -93,12 +94,17 @@ export function PipelineFeature() {
         </div>
       )}
 
-      <KanbanBoardUI 
-        colunas={colunasComClique} 
-        onDragEnd={handleDragEnd} 
-        carregando={carregandoPipeline} 
-        tipoFunil={tipoFunil}  
-      />
+      {/* Adicionado Wrapper para criar o Scroll Lateral no mobile */}
+      <div className="flex-1 overflow-x-auto pb-4 hide-scrollbar">
+        <div className="min-w-[800px] h-full">
+          <KanbanBoardUI 
+            colunas={colunasComClique} 
+            onDragEnd={handleDragEnd} 
+            carregando={carregandoPipeline} 
+            tipoFunil={tipoFunil}  
+          />
+        </div>
+      </div>
 
       <DetalhesNegociacaoModal
         isOpen={!!idSelecionado}
@@ -106,7 +112,6 @@ export function PipelineFeature() {
         negociacao={negociacaoSelecionada}
       />
 
-      {/* 4. Renderização independente do novo modal */}
       <CadastroTarefaFeature
         isOpen={modalTarefaAberto}
         onClose={() => {
