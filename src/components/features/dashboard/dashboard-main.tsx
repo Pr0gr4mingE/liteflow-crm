@@ -44,7 +44,7 @@ export function DashboardMain() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Esquerda: Gráfico de Funil */}
-        <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm min-h-[400px] flex flex-col">
+        <div className="bg-white rounded-xl p-6 border border-slate-200 shadow-sm h-fit flex flex-col">
           <h3 className="font-semibold text-slate-800 mb-2">Funil de Vendas</h3>
           <p className="text-sm text-slate-500 mb-6">Valores totais agrupados por estágio.</p>
           
@@ -57,18 +57,21 @@ export function DashboardMain() {
           </div>
         </div>
 
-        {/* Direita: Listas Verticais */}
-        <div className="flex flex-col gap-6">
+        {/* Direita: Apenas Negociações Quentes */}
+        <div className="flex flex-col h-fit">
           <DashboardNegociacoes 
             negociacoes={dados?.negociacoesProximas} 
             carregando={carregando} 
           />
-          
-          <DashboardTarefas 
-            tarefas={dados?.tarefasProximas} 
-            carregando={carregando} 
-          />
         </div>
+      </div>
+
+      {/* Linha Inferior: Tarefas Pendentes Centralizadas/Expandidas */}
+      <div className="w-full mt-2">
+        <DashboardTarefas 
+          tarefas={dados?.tarefasProximas} 
+          carregando={carregando} 
+        />
       </div>
     </div>
   );

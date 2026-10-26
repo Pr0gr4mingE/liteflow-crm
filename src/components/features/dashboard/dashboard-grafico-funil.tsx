@@ -27,12 +27,13 @@ export function GraficoFunil({ dados }: GraficoFunilProps) {
   const maiorValor = Math.max(...dados.map((d) => d.valorTotal), 1);
 
   return (
-    // Adicionado overflow-x-auto na div principal
-    <div className="h-72 w-full pt-4 pb-2 flex flex-col justify-end overflow-x-auto hide-scrollbar">
-      {/* Adicionado min-w-[500px] e justificado no início (start) no mobile */}
-      <div className="flex h-56 items-end justify-start sm:justify-around gap-6 sm:gap-3 px-4 sm:px-2 border-b border-slate-100 pb-3 min-w-[500px] sm:min-w-0">
+    // sm:overflow-visible desativa qualquer scroll no desktop, voltando ao normal
+    <div className="h-85 w-full pt-4 pb-2 flex flex-col justify-end overflow-x-auto md:overflow-visible hide-scrollbar">
+      
+      {/* sm:min-w-0 e sm:w-full removem a largura forçada no desktop */}
+      <div className="flex h-62 items-end justify-start sm:justify-between gap-6 sm:gap-0 px-4 sm:px-12 border-b border-slate-100 pb-3 min-w-[500px] sm:min-w-0 sm:w-full">
+        
         {dados.map((item, index) => {
-          // Mantém uma altura proporcional, mas limita o crescimento excessivo e garante visibilidade mínima
           const alturaPercentual = Math.max((item.valorTotal / maiorValor) * 100, 6);
 
           return (
@@ -52,7 +53,7 @@ export function GraficoFunil({ dados }: GraficoFunilProps) {
                 {item.quantidade}x
               </span>
 
-              {/* Barra Estilizada (Mais fina, elegante e com cantos arredondados) */}
+              {/* Barra Estilizada */}
               <div
                 className="w-8 sm:w-10 rounded-t-lg transition-all duration-300 ease-out hover:opacity-90 shadow-sm cursor-pointer"
                 style={{
@@ -61,7 +62,7 @@ export function GraficoFunil({ dados }: GraficoFunilProps) {
                 }}
               ></div>
               
-              {/* Rótulo do Eixo X (Nome da fase em caixa baixa elegante e fonte limpa) */}
+              {/* Rótulo do Eixo X */}
               <span className="absolute top-full mt-3 text-[11px] text-slate-500 font-medium text-center w-20 truncate tracking-tight">
                 {item.fase.toLowerCase()}
               </span>
